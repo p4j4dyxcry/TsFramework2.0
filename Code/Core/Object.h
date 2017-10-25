@@ -7,8 +7,8 @@ namespace TS
     public:
         const char*  GetClassName() const;
         virtual const char* ToString()const;
-
-        explicit operator const char*() const;
+        operator const char*() const;
+        virtual ~Object();
     };
 }
 

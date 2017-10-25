@@ -65,14 +65,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Code\Core\Interface.h" />
-    <ClInclude Include="Code\Core\NamedObject.h" />
+    <ClInclude Include="Code\Core\INamed.h" />
+    <ClInclude Include="Code\Core\Logger.h" />
     <ClInclude Include="Code\Core\Object.h" />
     <ClInclude Include="Code\Core\Scaler.h" />
+    <ClInclude Include="Code\Core\Develop.h" />
     <ClInclude Include="Code\Utility\File\File.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\Core\Interface.cpp" />
-    <ClCompile Include="Code\Core\NamedObject.cpp" />
+    <ClCompile Include="Code\Core\INamed.cpp" />
+    <ClCompile Include="Code\Core\Logger.cpp" />
     <ClCompile Include="Code\Core\Object.cpp" />
     <ClCompile Include="Code\Core\Scaler.cpp" />
     <ClCompile Include="Code\Utility\File\File.cpp" />

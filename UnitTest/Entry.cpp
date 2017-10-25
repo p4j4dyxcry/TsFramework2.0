@@ -1,15 +1,14 @@
-#include "../Code/Core/Object.h"
-#include "../Code/Core/NamedObject.h"
-#include <iostream>
+#include "../Code/Core/INamed.h"
+#include "../Code/Core/Develop.h"
 
 using namespace TS;
 
 void main()
 {
-    NamedObject object;
-    object.SetName("who ?");
-    std::cout << object.GetClassName() << std::endl;
-    std::cout << object.GetName() << std::endl;
+    INamed object;
+    object.SetIName("who ?");
+
+    TS_LOG(object);
     while(1)
     {
         

@@ -1,4 +1,4 @@
-﻿#include "NamedObject.h"
+﻿#include "INamed.h"
 
 namespace TS
 {
@@ -7,9 +7,9 @@ namespace TS
      * \brief 名前の取得
      * \return 名前
      */
-    const char* NamedObject::GetName() const
+    const char* INamed::GetIName() const
     {
-        return m_name;
+        return m_iname;
     }
 
     /**
@@ -17,10 +17,10 @@ namespace TS
      * \param name 
      * \return 成功 true
      */
-    bool NamedObject::SetName(const char* name)
+    bool INamed::SetIName(const char* name)
     {
         char * source = const_cast<char*>(name);
-        char * dest = m_name;
+        char * dest = m_iname;
 
         do
         {
@@ -30,11 +30,16 @@ namespace TS
         return true;
     }
 
-    NamedObject::NamedObject()
+    const char* INamed::ToString() const
     {
-        const int array_size = sizeof(m_name) / sizeof(m_name[0]);
+        return m_iname;
+    }
+
+    INamed::INamed()
+    {
+        const int array_size = sizeof(m_iname) / sizeof(m_iname[0]);
 
         for (int i = 0; i < array_size; ++i)
-            m_name[i] = '\0';
+            m_iname[i] = '\0';
     }
 }

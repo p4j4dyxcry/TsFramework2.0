@@ -2,10 +2,10 @@
 #include "Object.h"
 namespace TS
 {
-    class Interface : public Object
+    class Interface 
     {
     public:
-
+        virtual ~Interface() = default;
     };
 }
 

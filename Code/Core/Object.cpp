@@ -8,10 +8,14 @@ const char* TS::Object::GetClassName() const
 
 const char* TS::Object::ToString() const
 {
-    return typeid(*this).raw_name();
+    return GetClassName();
 }
 
 TS::Object::operator const char*() const
 {
     return ToString();
+}
+
+TS::Object::~Object()
+{
 }
