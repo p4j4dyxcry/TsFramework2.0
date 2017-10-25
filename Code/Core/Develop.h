@@ -4,23 +4,22 @@
 
 //!  コピーコンストラクタとコピー代入演算子を禁止
 #define TS_DISABLE_COPY( type ) \
-private: \
-    type( const type& ); \
-    type& operator=( const type& )
+    type( const type& ) = delete; \
+    type& operator=( const type& ) = delete
 
 //!  ムーブコンストラクタとムーブ代入演算子を禁止
 #define TS_DISABLE_MOVE( type ) \
-private: \
-    type( type&& ); \
-    type& operator=( type&& )
+    type( type&& ) = delete; \
+    type& operator=( type&& ) = delete
 
 //!  意図した未使用変数に対するコンパイラ警告を抑制
 #define TS_UNUSED( variable ) \
     ( void )( variable )
 
 //! 対象の利用は非推奨であることを宣言
-#define TS_DEPRECATED \
-    __declspec(deprecated("非推奨な項目を利用しています。この機能は廃止予定です。"))
+#define TS_DEPRECATED __declspec(deprecated("非推奨な項目を利用しています。この機能は廃止予定です。"))
+#define TS_DEPRECATED_MESSAGE (message) __declspec(deprecated(message))
+
 
 //!  現在の関数の名前
 #define TS_FUNCTION __FUNCTION__

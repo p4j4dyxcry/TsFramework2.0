@@ -2,7 +2,6 @@
 
 namespace TS
 {
-
     /**
      * \brief 名前の取得
      * \return 名前

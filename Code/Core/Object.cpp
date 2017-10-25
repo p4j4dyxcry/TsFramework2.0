@@ -16,6 +16,3 @@ TS::Object::operator const char*() const
     return ToString();
 }
 
-TS::Object::~Object()
-{
-}

@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Develop.h"
 
 namespace TS
 {
@@ -31,7 +32,8 @@ namespace TS
     class Logger 
     {
     public:
-       virtual void Log(LogMetaData& metaData , const char * format , ...);
+        virtual ~Logger() = default;
+        virtual void Log(LogMetaData& metaData , const char * format , ...);
     };
 
     /**
