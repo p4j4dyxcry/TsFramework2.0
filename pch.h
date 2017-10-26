@@ -12,4 +12,5 @@
 #include <functional>
 #include <new>
 #include <string>
+#include <sstream>
 #include <vector>
