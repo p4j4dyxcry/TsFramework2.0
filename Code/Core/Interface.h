@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Object.h"
+
 namespace TS
 {
     class Interface 

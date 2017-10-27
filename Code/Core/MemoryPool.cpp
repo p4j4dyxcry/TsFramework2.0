@@ -1,6 +1,11 @@
 ﻿#include "MemoryPool.h"
 namespace TS
-{    
+{
+    void IMemoryPool::Lock()
+    {
+        std::lock_guard<decltype(m_mutex)> lock(m_mutex);
+    }
+
     StaticMemoryPool::StaticMemoryPool(const size_t chunkSize, const unsigned chunkCount)
         :m_ChunkSize(chunkSize),
          m_ChunkCount(chunkCount),
@@ -33,6 +38,12 @@ namespace TS
             m_pChunkList[i].pUnion = nullptr;
 
             m_pChunkList[i].pPointer = &m_pMemory[i * GetChunkSize()];
+
+            if( i == 3650)
+            {
+                int c = 0;
+            }
+
         }
 
         m_pCurrentChunk = m_pChunkList;
@@ -47,6 +58,8 @@ namespace TS
 
     void* StaticMemoryPool::Alloc(const size_t memorySize)
     {
+        //Lock();
+
         //! 要求されたメモリに対する必要なチャンクを計算する
         const unsigned requiredChunk = (memorySize / ( GetChunkSize() + 1)) + 1;
 
@@ -67,13 +80,13 @@ namespace TS
 
     bool StaticMemoryPool::Free(void* pointer)
     {
-        //! アドレスからチャンク番号を求める
-        const int chunkID = ( static_cast<unsigned char *>(pointer) - m_pMemory) / GetChunkSize();
-        
-        //! このメモリプールで確保されたメモリではない。
-        if(chunkID < 0 || chunkID >= GetChunkCount())
+        //Lock();
+
+        if (From(pointer) == false)
             return false;
 
+        //! アドレスからチャンク番号を求める
+        const int chunkID = ( static_cast<unsigned char *>(pointer) - m_pMemory) / GetChunkSize();
 
         Chunk* pHead = &m_pChunkList[chunkID];
 
@@ -131,36 +144,55 @@ namespace TS
         return result;
     }
 
+    bool StaticMemoryPool::From(void* pointer) const
+    {
+        const unsigned long long id = (char*)pointer - (char*)m_pMemory;
+
+        return id >= 0 && id < GetMemorySize();
+    }
+
     bool StaticMemoryPool::SeekEmptyChunk(const unsigned continuous)
     {
         Chunk* pTempChunk = m_pCurrentChunk;
         int counter = 0;
 
+        if(continuous > 1000)
+        {
+            counter = 0;
+        }
+
         //! 1. 現在のチャンクから末端まで空きの検索を進める
         while(pTempChunk != nullptr)
         {
-            if (!pTempChunk->isUsing)
-                ++counter;
-            if (counter >= continuous)
-            {
+            if (counter == 0)
                 m_pCurrentChunk = pTempChunk;
+
+            if (pTempChunk->isUsing == false)
+                ++counter;
+            else
+                counter = 0;
+
+            if (counter >= continuous)
                 return true;
-            }
             pTempChunk = pTempChunk->pNext;
         }
 
         counter = 0;
         pTempChunk = m_pChunkList;
         //! 2. (1)で見つからなかった場合は先頭からカレントまで空きの検索を進める
-        while (pTempChunk != m_pCurrentChunk)
+        while (pTempChunk != nullptr && pTempChunk != m_pCurrentChunk)
         {
+            if(counter == 0)
+                m_pCurrentChunk = pTempChunk;
+
             if (!pTempChunk->isUsing)
                 ++counter;
+            else
+                counter = 0;
+
             if (counter >= continuous)
-            {
-                m_pCurrentChunk = pTempChunk;
                 return true;
-            }
+
             pTempChunk = pTempChunk->pNext;
         }
 

@@ -1,7 +1,7 @@
 #include "Develop.h"
 #include "Logger.h"
-#include <stdio.h>
 #include <cstdarg>
+
 
 namespace TS
 {

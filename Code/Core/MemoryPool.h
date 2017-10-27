@@ -2,11 +2,15 @@
 #include "Object.h"
 #include "Develop.h"
 #include "Interface.h"
+#include <mutex>
 
 namespace TS
 {
     class IMemoryPool : public Interface
     {
+    protected:
+        std::mutex m_mutex;
+        void Lock();
     public:
         virtual void* Alloc(const size_t memorySize) = 0;
         virtual bool  Free(void* pointer) = 0;
@@ -79,6 +83,13 @@ namespace TS
          * \return 
          */
         size_t GetUsingMemorySize()const;
+
+        /**
+         * \brief 指定されたポインタがこのプールから確保された物か調べる
+         * \param pointer 
+         * \return 
+         */
+        bool From(void* pointer) const;
 
         const char* ToString() const override;
 

@@ -106,6 +106,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Code\Core\Allocator.h" />
     <ClInclude Include="Code\Core\Interface.h" />
     <ClInclude Include="Code\Core\INamed.h" />
     <ClInclude Include="Code\Core\Logger.h" />
@@ -117,6 +118,7 @@
     <ClInclude Include="Code\Utility\File\File.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Code\Core\Allocator.cpp" />
     <ClCompile Include="Code\Core\Interface.cpp" />
     <ClCompile Include="Code\Core\INamed.cpp" />
     <ClCompile Include="Code\Core\Logger.cpp" />

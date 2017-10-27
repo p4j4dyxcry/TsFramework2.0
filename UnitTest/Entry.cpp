@@ -1,6 +1,8 @@
 ﻿#include "../Code/Core/INamed.h"
 #include "../Code/Core/Develop.h"
 #include "Code/Core/MemoryPool.h"
+#include "Code/Core/Allocator.h"
+#include <list>
 
 using namespace TS;
 #include <Windows.h>
@@ -23,7 +25,6 @@ void StaticMemoryPoolTest()
         unsigned memorySize = 1024 * ((rand()%31) + 1);
         mem.push_back( memory_pool.Alloc(memorySize));
         TS_LOG_DEBUG("メモリ確保 %d\n",memorySize);
-        Sleep(100);
     }
     
     TS_LOG_DEBUG(memory_pool.ToString());
@@ -33,7 +34,33 @@ void StaticMemoryPoolTest()
     {
         memory_pool.Free(e);
     }
-    TS_LOG_DEBUG(memory_pool.ToString());
+    TS_LOG(memory_pool.ToString());
+}
+
+void CustomAllocatorTest()
+{
+    std::list<int> data{ 5,5,5 };
+
+    auto start = clock();
+    for (int i = 0; i<5000000; ++i)
+    {
+        data.push_back(i);
+    }
+    double res = (clock() - start) / (double)CLOCKS_PER_SEC;
+    TS_LOG("デフォルトアロケータ %f\n", res);
+
+    std::list<int, STLAllocator<int>> data2{ 5,5,5 };
+    
+
+    start = clock();
+    for (int i = 0; i<5000000; ++i)
+    {
+        data2.push_back(i);
+    }
+
+
+    res = (clock() - start) / (double)CLOCKS_PER_SEC;
+    TS_LOG("カスタムアロケータ %f\n", res);
 }
 
 void main()
@@ -41,9 +68,9 @@ void main()
     SetUserLogger(new KingLogger());
     INamed object;
     object.SetIName("who ?");
-    
-    StaticMemoryPoolTest();
-    
+
+    //StaticMemoryPoolTest();
+    CustomAllocatorTest();
     while(true)
     {
         
