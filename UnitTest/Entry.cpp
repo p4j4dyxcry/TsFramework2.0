@@ -1,8 +1,8 @@
 ﻿#include "../Code/Core/INamed.h"
 #include "../Code/Core/Develop.h"
-#include "Code/Core/MemoryPool.h"
-#include "Code/Core/Allocator.h"
 #include <list>
+#include "Code/Core/Memory/MemoryPool.h"
+#include "Code/Core/Memory/MemorySystem.h"
 
 using namespace TS;
 #include <Windows.h>
@@ -39,40 +39,44 @@ void StaticMemoryPoolTest()
 
 void CustomAllocatorTest()
 {
-    std::list<int> data{ 5,5,5 };
 
     auto start = clock();
-    for (int i = 0; i<5000000; ++i)
+    for (int i = 0; i<50000; ++i)
     {
-        data.push_back(i);
+        int * ptr = new int(i);
+
+        delete ptr;
     }
     double res = (clock() - start) / (double)CLOCKS_PER_SEC;
     TS_LOG("デフォルトアロケータ %f\n", res);
 
-    std::list<int, STLAllocator<int>> data2{ 5,5,5 };
-    
-
     start = clock();
-    for (int i = 0; i<5000000; ++i)
+    for (int i = 0; i<50000; ++i)
     {
-        data2.push_back(i);
+        int * ptr = TS_NEW(int)(i);
+        TS_DELETE(ptr);
     }
-
 
     res = (clock() - start) / (double)CLOCKS_PER_SEC;
     TS_LOG("カスタムアロケータ %f\n", res);
 }
 
+
+
 void main()
 {
+    GetMemorySystem().EnableMemoryLeakCheck();
+
+    GetMemorySystem().GetSystemDefaultAllocator();
     SetUserLogger(new KingLogger());
     INamed object;
     object.SetIName("who ?");
 
-    //StaticMemoryPoolTest();
     CustomAllocatorTest();
-    while(true)
-    {
-        
-    }
+    
+
+    GetMemorySystem().DumpLeak();
+
+    while (true) {};
+
 }

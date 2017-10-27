@@ -39,10 +39,13 @@
     <ClInclude Include="pch.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Code\Core\MemoryPool.h">
+    <ClInclude Include="Code\Core\Memory\Allocator.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Code\Core\Allocator.h">
+    <ClInclude Include="Code\Core\Memory\MemoryPool.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\Core\Memory\MemorySystem.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,10 +74,13 @@
     <ClCompile Include="pch.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Core\MemoryPool.cpp">
+    <ClCompile Include="Code\Core\Memory\Allocator.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Code\Core\Allocator.cpp">
+    <ClCompile Include="Code\Core\Memory\MemoryPool.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Core\Memory\MemorySystem.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

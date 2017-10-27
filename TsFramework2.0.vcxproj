@@ -106,11 +106,12 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Code\Core\Allocator.h" />
+    <ClInclude Include="Code\Core\Memory\Allocator.h" />
     <ClInclude Include="Code\Core\Interface.h" />
     <ClInclude Include="Code\Core\INamed.h" />
     <ClInclude Include="Code\Core\Logger.h" />
-    <ClInclude Include="Code\Core\MemoryPool.h" />
+    <ClInclude Include="Code\Core\Memory\MemoryPool.h" />
+    <ClInclude Include="Code\Core\Memory\MemorySystem.h" />
     <ClInclude Include="Code\Core\Object.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Code\Core\Scaler.h" />
@@ -118,11 +119,12 @@
     <ClInclude Include="Code\Utility\File\File.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Code\Core\Allocator.cpp" />
+    <ClCompile Include="Code\Core\Memory\Allocator.cpp" />
     <ClCompile Include="Code\Core\Interface.cpp" />
     <ClCompile Include="Code\Core\INamed.cpp" />
     <ClCompile Include="Code\Core\Logger.cpp" />
-    <ClCompile Include="Code\Core\MemoryPool.cpp" />
+    <ClCompile Include="Code\Core\Memory\MemoryPool.cpp" />
+    <ClCompile Include="Code\Core\Memory\MemorySystem.cpp" />
     <ClCompile Include="Code\Core\Object.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

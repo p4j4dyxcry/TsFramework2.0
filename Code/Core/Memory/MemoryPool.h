@@ -1,8 +1,9 @@
 ﻿#pragma once
-#include "Object.h"
-#include "Develop.h"
-#include "Interface.h"
+
 #include <mutex>
+#include "Code/Core/Develop.h"
+#include "Code/Core/Interface.h"
+#include "Code/Core/Object.h"
 
 namespace TS
 {
@@ -114,6 +115,7 @@ namespace TS
     private:
         size_t         m_ChunkSize;     //! 1つのチャンクの容量。2を基底とする乗数を設定する
         unsigned int   m_ChunkCount;    //! プールに含まれるチャンクの数
+        size_t         m_MemorySize;    //! チャンクサイズ * チャンク数
         unsigned char* m_pMemory;       //! メモリプール
         Chunk*         m_pCurrentChunk; //! 現在のチャンク
         Chunk *        m_pChunkList;    //! チャンクの一覧
