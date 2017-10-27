@@ -3,7 +3,7 @@
 #include <list>
 #include "Code/Core/Memory/MemoryPool.h"
 #include "Code/Core/Memory/MemorySystem.h"
-
+#include "Code/Core/Memory/Pointer.h"
 using namespace TS;
 #include <Windows.h>
 
@@ -61,6 +61,16 @@ void CustomAllocatorTest()
     TS_LOG("カスタムアロケータ %f\n", res);
 }
 
+SharedPtr<float> SmartPointerTest()
+{
+	//IPointer<int> iPtr = (TS_NEW(int)());
+	SharedPtr<int> sPtr = (TS_NEW(int)());
+	SharedPtr<int>wPtr = sPtr;
+	//UniquePtr<int> uPtr = (TS_NEW(int)());
+	//auto ptr = sPtr;
+	//(*ptr) = 5;
+	return SharedPtr<float>(TS_NEW(float)(1.0f));
+}
 
 
 void main()
@@ -72,8 +82,9 @@ void main()
     INamed object;
     object.SetIName("who ?");
 
-    CustomAllocatorTest();
-    
+//    CustomAllocatorTest();
+	auto ptr = SmartPointerTest();
+	printf("%d", *ptr);
 
     GetMemorySystem().DumpLeak();
 

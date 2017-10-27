@@ -112,6 +112,7 @@
     <ClInclude Include="Code\Core\Logger.h" />
     <ClInclude Include="Code\Core\Memory\MemoryPool.h" />
     <ClInclude Include="Code\Core\Memory\MemorySystem.h" />
+    <ClInclude Include="Code\Core\Memory\Pointer.h" />
     <ClInclude Include="Code\Core\Object.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Code\Core\Scaler.h" />
@@ -125,6 +126,7 @@
     <ClCompile Include="Code\Core\Logger.cpp" />
     <ClCompile Include="Code\Core\Memory\MemoryPool.cpp" />
     <ClCompile Include="Code\Core\Memory\MemorySystem.cpp" />
+    <ClCompile Include="Code\Core\Memory\Pointer.cpp" />
     <ClCompile Include="Code\Core\Object.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

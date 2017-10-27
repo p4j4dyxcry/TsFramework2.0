@@ -53,7 +53,7 @@ namespace TS
 
     void* StaticMemoryPool::Alloc(const size_t memorySize)
     {
-        //Lock();
+        Lock();
 
         //! 要求されたメモリに対する必要なチャンクを計算する
         const unsigned requiredChunk = (memorySize / ( GetChunkSize() + 1)) + 1;
@@ -75,7 +75,7 @@ namespace TS
 
     bool StaticMemoryPool::Free(void* pointer)
     {
-        //Lock();
+        Lock();
 
         if (From(pointer) == false)
             return false;
