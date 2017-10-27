@@ -9,7 +9,7 @@ namespace TS
     enum LogLevel {
         Log_Debug,                 //! デバッグ用
         Log_Info,                  //! 想定通りの事象
-        Log_Warn,                  //! 想定外の事象
+        Log_Warning,               //! 想定外の事象
         Log_Error,                 //! 致命的な問題
     };                                 
    
