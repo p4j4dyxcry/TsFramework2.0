@@ -38,12 +38,6 @@ namespace TS
             m_pChunkList[i].pUnion = nullptr;
 
             m_pChunkList[i].pPointer = &m_pMemory[i * GetChunkSize()];
-
-            if( i == 3650)
-            {
-                int c = 0;
-            }
-
         }
 
         m_pCurrentChunk = m_pChunkList;
@@ -58,7 +52,7 @@ namespace TS
 
     void* StaticMemoryPool::Alloc(const size_t memorySize)
     {
-        //Lock();
+        Lock();
 
         //! 要求されたメモリに対する必要なチャンクを計算する
         const unsigned requiredChunk = (memorySize / ( GetChunkSize() + 1)) + 1;
@@ -80,7 +74,7 @@ namespace TS
 
     bool StaticMemoryPool::Free(void* pointer)
     {
-        //Lock();
+        Lock();
 
         if (From(pointer) == false)
             return false;
@@ -146,7 +140,7 @@ namespace TS
 
     bool StaticMemoryPool::From(void* pointer) const
     {
-        const unsigned long long id = (char*)pointer - (char*)m_pMemory;
+        const int id = static_cast<char*>(pointer) - reinterpret_cast<char*>(m_pMemory);
 
         return id >= 0 && id < GetMemorySize();
     }
@@ -155,11 +149,6 @@ namespace TS
     {
         Chunk* pTempChunk = m_pCurrentChunk;
         int counter = 0;
-
-        if(continuous > 1000)
-        {
-            counter = 0;
-        }
 
         //! 1. 現在のチャンクから末端まで空きの検索を進める
         while(pTempChunk != nullptr)
@@ -201,7 +190,7 @@ namespace TS
 
     void StaticMemoryPool::ClearMemory(Chunk* pChunk)
     {
-#if _DEBUG
+#ifdef _DEBUG
         if(pChunk != nullptr)
         {
             memset(pChunk->pPointer, 0, GetChunkSize());
