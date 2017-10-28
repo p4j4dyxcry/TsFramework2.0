@@ -33,7 +33,8 @@ namespace TS
     {
     public:
         virtual ~Logger() = default;
-        virtual void Log(LogMetaData& metaData , const char * format , ...);
+		virtual const char* Format(const char * format, ...);
+        virtual void Log(LogMetaData& metaData , const char * format);
     };
 
     /**

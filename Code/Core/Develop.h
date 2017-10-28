@@ -41,7 +41,7 @@
         metadata.fileName = TS_FILENAME; \
         metadata.functionName = TS_FUNCTION; \
         metadata.logLevel = TS::Log_Info; \
-        TS::GetLogger().Log(metadata, __VA_ARGS__);\
+        TS::GetLogger().Log(metadata, TS::GetLogger().Format(__VA_ARGS__));\
     }
 
 //! デバッグログを出力します。
@@ -53,7 +53,7 @@
             metadata.fileName = TS_FILENAME; \
             metadata.functionName = TS_FUNCTION; \
             metadata.logLevel = TS::Log_Debug; \
-            TS::GetLogger().Log(metadata, __VA_ARGS__);\
+            TS::GetLogger().Log(metadata, TS::GetLogger().Format(__VA_ARGS__));\
         }
 #else
     #define TS_LOG_DEBUG(...);
@@ -68,7 +68,7 @@
         metadata.fileName = TS_FILENAME; \
         metadata.functionName = TS_FUNCTION; \
         metadata.logLevel = TS::Log_Warning; \
-        TS::GetLogger().Log(metadata, __VA_ARGS__);\
+        TS::GetLogger().Log(metadata, TS::GetLogger().Format(__VA_ARGS__));\
     }
 
 //! エラーログを出力します。
@@ -79,5 +79,5 @@
         metadata.fileName = TS_FILENAME; \
         metadata.functionName = TS_FUNCTION; \
         metadata.logLevel = TS::Log_Error; \
-        TS::GetLogger().Log(metadata, __VA_ARGS__);\
+        TS::GetLogger().Log(metadata, TS::GetLogger().Format(__VA_ARGS__));\
     }
