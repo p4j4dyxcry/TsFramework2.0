@@ -171,7 +171,7 @@ namespace TS
 			}
 			if (m_pRefCounter->Invalid())
 			{
-				delete m_pRefCounter;
+				TS_DELETE(m_pRefCounter);
 			}
 		}
 
@@ -180,14 +180,14 @@ namespace TS
 			: IRefPtr<T>(nullptr,nullptr){}
 
 		SharedPtr(T *ptr) 
-			: IRefPtr<T>(ptr, ptr != nullptr ? new ReferenceCounter() : nullptr)
+			: IRefPtr<T>(ptr, ptr != nullptr ? TS_NEW(ReferenceCounter)() : nullptr)
 		{
 			if(m_pRefCounter)
 				m_pRefCounter->AddRef();
 		}
 		SharedPtr(T* pointer, const std::function<void(T*)>& deleter)
 			: IRefPtr(pointer 
-					  ,pointer != nullptr ? new ReferenceCounter() : nullptr		
+					  ,pointer != nullptr ? TS_NEW(ReferenceCounter)() : nullptr
 					  ,deleter)
 		{
 			if (m_pRefCounter)
@@ -280,7 +280,7 @@ namespace TS
 
 			if (m_pRefCounter->Invalid())
 			{
-				delete m_pRefCounter;
+				TS_DELETE(m_pRefCounter);
 			}
 		}
 	};
