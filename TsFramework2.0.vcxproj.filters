@@ -21,9 +21,6 @@
     <ClInclude Include="Code\Core\Object.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Code\Core\Interface.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Code\Core\Scaler.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -57,9 +54,6 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Code\Core\Object.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\Core\Interface.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Code\Core\Scaler.cpp">

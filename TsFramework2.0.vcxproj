@@ -107,7 +107,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Code\Core\Memory\Allocator.h" />
-    <ClInclude Include="Code\Core\Interface.h" />
     <ClInclude Include="Code\Core\INamed.h" />
     <ClInclude Include="Code\Core\Logger.h" />
     <ClInclude Include="Code\Core\Memory\MemoryPool.h" />
@@ -121,7 +120,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\Core\Memory\Allocator.cpp" />
-    <ClCompile Include="Code\Core\Interface.cpp" />
     <ClCompile Include="Code\Core\INamed.cpp" />
     <ClCompile Include="Code\Core\Logger.cpp" />
     <ClCompile Include="Code\Core\Memory\MemoryPool.cpp" />

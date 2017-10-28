@@ -1,13 +1,11 @@
 ﻿#pragma once
 #include "Object.h"
-#include "Interface.h"
 #include "Develop.h"
 
 namespace TS
 {    
     
-    class INamed : public Interface
-                  ,public Object
+    class INamed : public Object
     {
     private:
         char m_iname[1024];

@@ -2,12 +2,11 @@
 
 #include <mutex>
 #include "Code/Core/Develop.h"
-#include "Code/Core/Interface.h"
 #include "Code/Core/Object.h"
 
 namespace TS
 {
-    class IMemoryPool : public Interface
+    class IMemoryPool : public Object
     {
     protected:
         std::mutex m_mutex;
@@ -21,7 +20,6 @@ namespace TS
      * \brief 固定サイズのブロックから構成されるメモリープール
      */
     class StaticMemoryPool : public IMemoryPool
-                           , public Object
     {
     private:
         struct Chunk
