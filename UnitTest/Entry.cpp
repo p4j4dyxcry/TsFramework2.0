@@ -64,8 +64,11 @@ void CustomAllocatorTest()
 SharedPtr<float> SmartPointerTest()
 {
 	//IPointer<int> iPtr = (TS_NEW(int)());
-	SharedPtr<int> sPtr = (TS_NEW(int)());
-	SharedPtr<int>wPtr = sPtr;
+
+	SharedPtr<int> sPtr = SharedPtr<int>(TS_NEW(int)());
+	WeakPtr<int>   wPtr = sPtr;
+	WeakPtr<int>   wPtr2 = wPtr;
+	wPtr = wPtr2;
 	//UniquePtr<int> uPtr = (TS_NEW(int)());
 	//auto ptr = sPtr;
 	//(*ptr) = 5;

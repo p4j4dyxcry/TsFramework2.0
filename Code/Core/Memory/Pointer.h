@@ -56,15 +56,33 @@ namespace TS
 	template <typename T>
 	class IPointer : public Object
 	{		
-	public:
+	protected:
 		T* m_nativePointer;
+		std::function< void(T*) > m_deleter;
+
+		virtual void DeletePointer()
+		{
+			if (m_nativePointer)
+				m_deleter(m_nativePointer);
+		}
+
 	public:
-		IPointer(T* pointer):m_nativePointer(pointer){}
+
+		IPointer(T* pointer):
+			m_nativePointer(pointer)
+			, m_deleter([](T* p) {TS_DELETE(p);}) {}
+
+		IPointer(T* pointer,const std::function<void(T*)>& deleter)
+			:m_nativePointer(pointer)
+			,m_deleter(deleter){}
 
 		virtual T&  operator * () { return *m_nativePointer; }
 		virtual T*& operator ->() { return m_nativePointer; }
 		virtual const T&  operator * ()const { return *m_nativePointer; }
 		virtual const T* operator ->()const { return m_nativePointer; }
+		
+		T* GetPointer(){ return m_nativePointer;}
+		const T* GetPointer()const { return m_nativePointer; }
 	};
 
 	template<typename T>
@@ -75,9 +93,11 @@ namespace TS
 
 	public:
 		UniquePtr(T* pointer): IPointer(pointer){}
+		UniquePtr(T* pointer, std::function<void(T*)>& deleter)
+			: IPointer(pointer, deleter) {}
 		virtual ~UniquePtr()
 		{
-			TS_DELETE(m_nativePointer);
+			DeletePointer();
 		}
 	};
 
@@ -92,6 +112,12 @@ namespace TS
 
 		IRefPtr(T* pointer , ReferenceCounter * pRef)
 			: IPointer(pointer)
+			, m_pRefCounter(pRef){}
+
+		IRefPtr(T* pointer, 
+				ReferenceCounter * pRef ,
+				const std::function<void(T*)>& deleter)
+			: IPointer(pointer , deleter)
 			, m_pRefCounter(pRef){}
 
 		void AddObserver()
@@ -117,18 +143,13 @@ namespace TS
 			if (m_pRefCounter)
 				m_pRefCounter->SubRef();
 		}
-		bool IsRemovePointer()const
-		{
-			return m_pRefCounter->IsRemovePointer();
-		}
-
 		bool Invalid()const
 		{
 			return m_pRefCounter->Invalid();
 		}
-
-		void CopyRefFrom(const IRefPtr& ptr)
+		void CopyRefCounterFromArgument(const IRefPtr& ptr)
 		{
+			m_deleter = ptr.m_deleter;
 			m_pRefCounter = ptr.m_pRefCounter;
 		}
 
@@ -138,16 +159,15 @@ namespace TS
 	class SharedPtr : public IRefPtr<T>
 	{
 	private:
-		void SubSharedRef()
+		void Release()
 		{
 			if (m_pRefCounter == nullptr)
 				return;
 
 			m_pRefCounter->SubRef();
 			if (m_pRefCounter->IsRemovePointer())
-			{
-				if (m_nativePointer != nullptr)
-					TS_DELETE(m_nativePointer);
+			{				
+				DeletePointer();
 			}
 			if (m_pRefCounter->Invalid())
 			{
@@ -165,10 +185,19 @@ namespace TS
 			if(m_pRefCounter)
 				m_pRefCounter->AddRef();
 		}
+		SharedPtr(T* pointer, const std::function<void(T*)>& deleter)
+			: IRefPtr(pointer 
+					  ,pointer != nullptr ? new ReferenceCounter() : nullptr		
+					  ,deleter)
+		{
+			if (m_pRefCounter)
+				m_pRefCounter->AddRef();
+		}
+
 
 		SharedPtr(const SharedPtr &rhs) : IRefPtr<T>(rhs.m_nativePointer)
 		{
-			CopyRefFrom(rhs);
+			CopyRefCounterFromArgument(rhs);
 			if (m_pRefCounter)
 				m_pRefCounter->AddRef();
 		}
@@ -178,21 +207,18 @@ namespace TS
 			m_nativePointer = rhs.m_nativePointer;
 
 			if (m_pRefCounter != nullptr)
-				m_pRefCounter->SubRef();
+				m_pRefCounter->Release();
 
-			SubSharedRef();
-			CopyRefFrom(rhs);
+			CopyRefCounterFromArgument(rhs);
 			if (m_pRefCounter)
 				m_pRefCounter->AddRef();
 
 			return *this;
 		}
 
-
-
 		virtual ~SharedPtr()
 		{
-			SubSharedRef();
+			Release();
 		}
 	};
 
@@ -204,9 +230,16 @@ namespace TS
 			: IRefPtr<T>(nullptr,nullptr){}
 
 		WeakPtr(SharedPtr<T> &rhs) 
-			: IRefPtr<T>(rhs.m_nativePointer)
+			: IRefPtr<T>(rhs)
 		{
-			CopyRefFrom(rhs);
+			CopyRefCounterFromArgument(rhs);
+			m_pRefCounter->AddObserver();
+		}
+
+		WeakPtr(WeakPtr&rhs)
+			: IRefPtr<T>(rhs)
+		{
+			CopyRefCounterFromArgument(rhs);
 			m_pRefCounter->AddObserver();
 		}
 
@@ -214,10 +247,10 @@ namespace TS
 		{
 			m_nativePointer = rhs.m_nativePointer;
 
-			if (m_pRefCounter != null)
+			if (m_pRefCounter != nullptr)
 				m_pRefCounter->SubObserver();
 
-			CopyRefFrom(rhs);
+			CopyRefCounterFromArgument(rhs);
 			m_pRefCounter->AddObserver();
 
 			return *this;
@@ -230,7 +263,7 @@ namespace TS
 			if (m_pRefCounter != nullptr)
 				m_pRefCounter->SubObserver();
 
-			CopyRefFrom(rhs);
+			CopyRefCounterFromArgument(rhs);
 			m_pRefCounter->AddObserver();
 
 			return *this;
