@@ -1,6 +1,5 @@
 #pragma once
-#include "Code\Core\Develop.h"
-#include "MemorySystem.h"
+
 
 namespace TS
 {
@@ -14,43 +13,20 @@ namespace TS
 		ReferenceCounter()
 			:m_referenceCount(0)
 			,m_observerCount(0){}
-		void Lock()
-		{
-			std::lock_guard<decltype(m_mutex)> lock(m_mutex);
-		}
-		void AddObserver()
-		{
-			Lock();
-			++(m_observerCount);
-		}
 
-		void SubObserver()
-		{
-			Lock();
-			--(m_observerCount);
-		}
+	    void Lock();
 
-		void AddRef()
-		{
-			Lock();
-			++(m_referenceCount);
-			++(m_observerCount);
-		}
-		void SubRef()
-		{
-			Lock();
-			--(m_referenceCount);
-			--(m_observerCount);
-		}
-		bool IsRemovePointer()const
-		{
-			return m_referenceCount <= 0;
-		}
+	    void AddObserver();
 
-		bool Invalid()const 
-		{ 
-			return m_observerCount <= 0; 
-		}
+	    void SubObserver();
+
+	    void AddRef();
+
+	    void SubRef();
+
+	    bool IsRemovePointer() const;
+
+	    bool Invalid() const;
 	};
 
 	template <typename T>
@@ -60,14 +36,10 @@ namespace TS
 		T* m_nativePointer;
 		std::function< void(T*) > m_deleter;
 
-		virtual void DeletePointer()
-		{
-			if (m_nativePointer)
-				m_deleter(m_nativePointer);
-		}
+	protected:
+		virtual void DeletePointer(){if ( m_nativePointer )m_deleter(m_nativePointer);}
 
 	public:
-
 		IPointer(T* pointer):
 			m_nativePointer(pointer)
 			, m_deleter([](T* p) {TS_DELETE(p);}) {}
@@ -83,6 +55,18 @@ namespace TS
 		
 		T* GetPointer(){ return m_nativePointer;}
 		const T* GetPointer()const { return m_nativePointer; }
+
+        bool operator==(const IPointer& rhs){ return m_nativePointer == rhs.m_nativePointer; }
+
+        bool operator!=(const IPointer& rhs){ return !(*this == rhs);}
+
+        bool operator==(const nullptr_t& null){ return m_nativePointer == null; }
+
+        bool operator!=(const nullptr_t& null){ return !(*this == null);}
+
+        operator bool()const{return (*this != nullptr);}
+
+        bool IsNull()const{ return *this == nullptr;}
 	};
 
 	template<typename T>
@@ -207,7 +191,7 @@ namespace TS
 			m_nativePointer = rhs.m_nativePointer;
 
 			if (m_pRefCounter != nullptr)
-				m_pRefCounter->Release();
+                Release();
 
 			CopyRefCounterFromArgument(rhs);
 			if (m_pRefCounter)
@@ -225,6 +209,20 @@ namespace TS
 	template<typename T>
 	class WeakPtr : public IRefPtr<T>
 	{
+	private:
+        void Release()
+        {
+            if (m_pRefCounter == nullptr)
+                return;
+
+            if (m_pRefCounter != nullptr)
+                m_pRefCounter->SubObserver();
+
+            if (m_pRefCounter->Invalid())
+            {
+                TS_DELETE(m_pRefCounter);
+            }
+        }
 	public:
 		WeakPtr() 
 			: IRefPtr<T>(nullptr,nullptr){}
@@ -248,7 +246,7 @@ namespace TS
 			m_nativePointer = rhs.m_nativePointer;
 
 			if (m_pRefCounter != nullptr)
-				m_pRefCounter->SubObserver();
+                Release();
 
 			CopyRefCounterFromArgument(rhs);
 			m_pRefCounter->AddObserver();
@@ -261,7 +259,7 @@ namespace TS
 			m_nativePointer = rhs.m_nativePointer;
 
 			if (m_pRefCounter != nullptr)
-				m_pRefCounter->SubObserver();
+                Release();
 
 			CopyRefCounterFromArgument(rhs);
 			m_pRefCounter->AddObserver();
@@ -269,20 +267,11 @@ namespace TS
 			return *this;
 		}
 
-
 		virtual ~WeakPtr()
 		{
-			if (m_pRefCounter == nullptr)
-				return;
-
-			if (m_pRefCounter != nullptr)
-				m_pRefCounter->SubObserver();
-
-			if (m_pRefCounter->Invalid())
-			{
-				TS_DELETE(m_pRefCounter);
-			}
+            Release();
 		}
 	};
+
 }
 

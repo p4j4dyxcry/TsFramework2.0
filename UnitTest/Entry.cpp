@@ -1,17 +1,17 @@
-﻿#include "../Code/Core/INamed.h"
+﻿
 #include "../Code/Core/Develop.h"
 #include "Code/Core/Memory/MemoryPool.h"
 #include "Code/Core/Memory/MemorySystem.h"
 #include "Code/Core/Memory/Pointer.h"
-#include <list>
 #include <Windows.h>
 
 using namespace TS;
 
+//! ログのエラーレベルによって色を付けてみるテストクラス
 class ColorLogger : public Logger
 {
 private:
-	void SetConsoleCollor(LogMetaData& metaData)
+	void  PreLog(LogMetaData& metaData) override
 	{
 		HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);
 		WORD attr = 0;
@@ -19,37 +19,32 @@ private:
 
 		switch (metaData.logLevel)
 		{
-		case TS::LogLevel::Log_Error:	attr |= (FOREGROUND_RED); break;
-		case TS::LogLevel::Log_Info:	attr |= (FOREGROUND_GREEN); break;
-		case TS::LogLevel::Log_Warning:	attr |= (FOREGROUND_RED | FOREGROUND_GREEN); break;
-		case TS::LogLevel::Log_Debug:	attr |= (FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN); break;
+		case Log_Error:	    attr |= (FOREGROUND_RED); break;
+		case Log_Info:	    attr |= (FOREGROUND_GREEN); break;
+		case Log_Warning:	attr |= (FOREGROUND_RED | FOREGROUND_GREEN); break;
+		case Log_Debug: 	attr |= (FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN); break;
 		}
 
 		SetConsoleTextAttribute(hCons, attr);
 	}
+
+    void  EndLog(LogMetaData& metaData)override
+    {
+        HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);
+        WORD attr = (FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN);
+        SetConsoleTextAttribute(hCons, attr);
+    }
 public:
-
-
-	void Log(LogMetaData& metaData, const char * format)override
-	{
-		SetConsoleCollor(metaData);
-		printf(format);
-		
-		HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);
-		WORD attr = (FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN) ;
-		SetConsoleTextAttribute(hCons, attr);
-		
-	}
 
 };
 
 void UserLoggerTest()
 {
 	TS_LOG("◇ユーザ定義のロガーの動作確認テスト\n\n");
-	auto logger = TS_NEW(ColorLogger)();
+	SharedPtr<Logger> logger = TS_NEW(ColorLogger)();
 
 	TS_LOG("ユーザ定義のロガー未使用--\n");
-	SetUserLogger(nullptr);
+	SetUserLogger( nullptr );
 	TS_LOG("通常ログ\n");
 	TS_LOG_ERROR("エラーログ\n");
 	TS_LOG_WARNING("警告ログ\n");

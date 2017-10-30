@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Develop.h"
 
 namespace TS
 {
@@ -34,14 +33,16 @@ namespace TS
     public:
         virtual ~Logger() = default;
 		virtual const char* Format(const char * format, ...);
+        virtual void PreLog(LogMetaData& metaData) {};
         virtual void Log(LogMetaData& metaData , const char * format);
+        virtual void EndLog(LogMetaData& metaData) {};
     };
 
     /**
      * \brief ユーザ定義のロガーを設定します。
      * \param logger ユーザが作成したロガークラスです。
      */
-    void SetUserLogger(Logger* logger);
+    void SetUserLogger(const SharedPtr<Logger> logger);
     
     /**
     * \brief 現在適用されているロガーを取得します。デフォルトのロガーはprintf関数に近い動作をします。

@@ -1,26 +1,27 @@
-#include "Develop.h"
+
 #include "Logger.h"
-#include <iostream>
 #include <cstdarg>
+
+#include "Code/Utility/IO/DoubleOutStream.h"
+#include "Memory/Pointer.h"
 
 
 namespace TS
 {
-
     namespace
     {
         Logger  g_DefaultLogger;
-        Logger* g_pUserLogger = nullptr;
+        SharedPtr<Logger> g_pUserLogger = nullptr;
     }
 
-    void SetUserLogger(Logger* logger)
+    void SetUserLogger(const SharedPtr<Logger> logger)
     {
         g_pUserLogger = logger;
     }
 
     Logger& GetLogger()
     {
-        return g_pUserLogger ? *g_pUserLogger : g_DefaultLogger;
+        return g_pUserLogger != nullptr ? *g_pUserLogger : g_DefaultLogger;
     }
 
 	const char* Logger::Format(const char * format, ...)
@@ -35,9 +36,12 @@ namespace TS
 
     void Logger::Log(LogMetaData& metaData, const char* format)
     {
-        TS_UNUSED(metaData);		
+        PreLog(metaData);
 
-		std::cout << format;
+        std::ofstream debugLog("debug.log", std::ios::app);
+        cout2(debugLog) << format;
+
+        EndLog(metaData);
     }
 }
 
