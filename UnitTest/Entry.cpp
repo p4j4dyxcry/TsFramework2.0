@@ -3,6 +3,7 @@
 #include "Code/Core/Memory/MemoryPool.h"
 #include "Code/Core/Memory/MemorySystem.h"
 #include "Code/Core/Memory/Pointer.h"
+#include "Code\Utility\File\FileUtility.h"
 #include <Windows.h>
 
 using namespace TS;
@@ -126,6 +127,28 @@ void SmartPointerTest()
 	TS_LOG("\n----------------------------------- \n");
 }
 
+void FilePathTest()
+{
+
+	TS_LOG("◇ファイルテスト \n\n");
+	{
+		char path[_MAX_PATH];
+		FileUtility::GetCD(path);
+		char dirName[_MAX_PATH];
+		FileUtility::GetName(dirName,path);
+
+		TS_LOG("カレントディレクトリテスト -> \n%s\n", FileUtility::SetCD(path) ? "成功" : "失敗" );
+
+		char dir[_MAX_PATH] = "test_dir";
+		FileUtility::Combine(dirName, path, dir);
+		TS_LOG("ディレクトリ　　 -> \n%s\n%s\n", dirName, FileUtility::Exist(dirName) ? "存在" : "存在しない");
+		TS_LOG("ディレクトリ作成 -> \n%s\n%s\n", dirName, FileUtility::CreateDir(dirName) ? "成功" : "失敗");
+		TS_LOG("ディレクトリ　　 -> \n%s\n%s\n", dirName, FileUtility::Exist(dirName) ? "存在" : "存在しない");
+		TS_LOG("ディレクトリ削除 -> \n%s\n%s\n", dirName, FileUtility::Delete(dirName,true) ? "成功" : "失敗");
+		TS_LOG("ディレクトリ　　 -> \n%s\n%s\n", dirName, FileUtility::Exist(dirName) ? "存在" : "存在しない");
+	}
+	TS_LOG("\n----------------------------------- \n");
+}
 
 void main()
 {
@@ -136,8 +159,8 @@ void main()
 	StaticMemoryPoolTest();
     CustomAllocatorTest();
 	SmartPointerTest();
-
-    GetMemorySystem().DumpLeak();
+	FilePathTest();
+//    GetMemorySystem().DumpLeak();
 
     while (true) {};
 
