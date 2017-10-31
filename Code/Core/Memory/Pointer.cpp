@@ -1,33 +1,28 @@
 #include "Pointer.h"
 namespace TS
 {
-    void ReferenceCounter::Lock()
-    {
-        std::lock_guard<decltype(m_mutex)> lock(m_mutex);
-    }
-
     void ReferenceCounter::AddObserver()
     {
-        Lock();
+		TS_LOCK(Mutex());
         ++(m_observerCount);
     }
 
     void ReferenceCounter::SubObserver()
     {
-        Lock();
+		TS_LOCK(Mutex());
         --(m_observerCount);
     }
 
     void ReferenceCounter::AddRef()
     {
-        Lock();
+		TS_LOCK(Mutex());
         ++(m_referenceCount);
         ++(m_observerCount);
     }
 
     void ReferenceCounter::SubRef()
     {
-        Lock();
+		TS_LOCK(Mutex());
         --(m_referenceCount);
         --(m_observerCount);
     }

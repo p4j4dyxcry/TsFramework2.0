@@ -11,6 +11,7 @@
 #include <cmath>
 #include <functional>
 #include <new>
+#include <future>
 
 #include <string>
 #include <sstream>

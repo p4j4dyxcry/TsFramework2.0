@@ -3,18 +3,15 @@
 
 namespace TS
 {
-	class ReferenceCounter : Object
+	class ReferenceCounter : IMutex
 	{
 	private:
-		std::mutex m_mutex;
 		int m_referenceCount;
 		int m_observerCount;
 	public:
 		ReferenceCounter()
 			:m_referenceCount(0)
 			,m_observerCount(0){}
-
-	    void Lock();
 
 	    void AddObserver();
 
@@ -42,7 +39,7 @@ namespace TS
 	public:
 		IPointer(T* pointer):
 			m_nativePointer(pointer)
-			, m_deleter([](T* p) {TS_DELETE(p);}) {}
+			, m_deleter([](T* p) {TS_DELETE(p); p = nullptr; }) {}
 
 		IPointer(T* pointer,const std::function<void(T*)>& deleter)
 			:m_nativePointer(pointer)
@@ -142,23 +139,6 @@ namespace TS
 	template<typename T>
 	class SharedPtr : public IRefPtr<T>
 	{
-	private:
-		void Release()
-		{
-			if (m_pRefCounter == nullptr)
-				return;
-
-			m_pRefCounter->SubRef();
-			if (m_pRefCounter->IsRemovePointer())
-			{				
-				DeletePointer();
-			}
-			if (m_pRefCounter->Invalid())
-			{
-				TS_DELETE(m_pRefCounter);
-			}
-		}
-
 	public:
 		SharedPtr() 
 			: IRefPtr<T>(nullptr,nullptr){}
@@ -194,10 +174,26 @@ namespace TS
                 Release();
 
 			CopyRefCounterFromArgument(rhs);
-			if (m_pRefCounter)
+			if (m_pRefCounter != nullptr)
 				m_pRefCounter->AddRef();
 
 			return *this;
+		}
+
+		void Release()
+		{
+			if (m_pRefCounter == nullptr)
+				return;
+
+			m_pRefCounter->SubRef();
+			if (m_pRefCounter->IsRemovePointer())
+			{
+				DeletePointer();
+			}
+			if (m_pRefCounter->Invalid())
+			{
+				TS_DELETE(m_pRefCounter);
+			}
 		}
 
 		virtual ~SharedPtr()
@@ -231,14 +227,16 @@ namespace TS
 			: IRefPtr<T>(rhs)
 		{
 			CopyRefCounterFromArgument(rhs);
-			m_pRefCounter->AddObserver();
+			if(m_pRefCounter != nullptr)
+				m_pRefCounter->AddObserver();
 		}
 
 		WeakPtr(WeakPtr&rhs)
 			: IRefPtr<T>(rhs)
 		{
 			CopyRefCounterFromArgument(rhs);
-			m_pRefCounter->AddObserver();
+			if (m_pRefCounter != nullptr)
+				m_pRefCounter->AddObserver();
 		}
 
 		WeakPtr & operator = (const WeakPtr &rhs)
@@ -249,7 +247,8 @@ namespace TS
                 Release();
 
 			CopyRefCounterFromArgument(rhs);
-			m_pRefCounter->AddObserver();
+			if (m_pRefCounter != nullptr)
+				m_pRefCounter->AddObserver();
 
 			return *this;
 		}
@@ -262,7 +261,8 @@ namespace TS
                 Release();
 
 			CopyRefCounterFromArgument(rhs);
-			m_pRefCounter->AddObserver();
+			if (m_pRefCounter != nullptr)
+				m_pRefCounter->AddObserver();
 
 			return *this;
 		}

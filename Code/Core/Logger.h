@@ -5,7 +5,8 @@ namespace TS
     /**
      * \brief ログのレベルを定義します
      */
-    enum LogLevel {
+    enum LogLevel 
+	{
         Log_Debug,                 //! デバッグ用
         Log_Info,                  //! 想定通りの事象
         Log_Warning,               //! 想定外の事象

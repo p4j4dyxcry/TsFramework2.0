@@ -1,11 +1,7 @@
 ﻿#include "MemoryPool.h"
+
 namespace TS
 {
-    void IMemoryPool::Lock()
-    {
-        std::lock_guard<decltype(m_mutex)> lock(m_mutex);
-    }
-
     StaticMemoryPool::StaticMemoryPool(const size_t chunkSize, const unsigned chunkCount)
         :m_ChunkSize(chunkSize),
          m_ChunkCount(chunkCount),
@@ -53,7 +49,7 @@ namespace TS
 
     void* StaticMemoryPool::Alloc(const size_t memorySize)
     {
-        Lock();
+		TS_LOCK(Mutex());
 
         //! 要求されたメモリに対する必要なチャンクを計算する
         const unsigned requiredChunk = (memorySize / ( GetChunkSize() + 1)) + 1;
@@ -75,7 +71,7 @@ namespace TS
 
     bool StaticMemoryPool::Free(void* pointer)
     {
-        Lock();
+		TS_LOCK(Mutex());
 
         if (From(pointer) == false)
             return false;

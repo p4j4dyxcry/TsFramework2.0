@@ -3,14 +3,11 @@
 #include <mutex>
 #include "Code/Core/Develop.h"
 #include "Code/Core/Object.h"
-
+#include "Code/Core/Thread.h"
 namespace TS
 {
-    class IMemoryPool : public Object
+    class IMemoryPool : public IMutex
     {
-    protected:
-        std::mutex m_mutex;
-        void Lock();
     public:
         virtual void* Alloc(const size_t memorySize) = 0;
         virtual bool  Free(void* pointer) = 0;

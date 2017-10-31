@@ -106,7 +106,9 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Code\Core\Engine.h" />
     <ClInclude Include="Code\Core\ForwardDefinition.h" />
+    <ClInclude Include="Code\Core\Thread.h" />
     <ClInclude Include="Code\Core\Memory\Allocator.h" />
     <ClInclude Include="Code\Core\INamed.h" />
     <ClInclude Include="Code\Core\Logger.h" />
@@ -120,10 +122,12 @@
     <ClInclude Include="Code\Utility\Serialize.h" />
     <ClInclude Include="Code\Utility\Serialize\Array.hpp" />
     <ClInclude Include="Code\Utility\StopWatch.h" />
+    <ClInclude Include="Code\Utility\Window.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Code\Core\Develop.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Code\Core\Engine.cpp" />
     <ClCompile Include="Code\Core\Memory\Allocator.cpp" />
     <ClCompile Include="Code\Core\INamed.cpp" />
     <ClCompile Include="Code\Core\Logger.cpp" />

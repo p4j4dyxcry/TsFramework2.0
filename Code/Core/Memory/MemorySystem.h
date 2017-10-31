@@ -21,6 +21,7 @@ namespace TS
 
     class MemorySystem : Object
     {
+		friend class Engine;
     private:
         TS_DISABLE_COPY(MemorySystem);
         MemorySystem();
@@ -164,6 +165,7 @@ namespace TS
 
         if( memorySystem.IsEnableMemoryLeak())
             memorySystem.RemoveMemoryMetaData(ptr);
+		ptr = nullptr;
     }
 
     /**

@@ -8,7 +8,8 @@
 #include "Code/Utility/Serialize.h"
 #include "Code/Utility/StopWatch.h"
 #include <Windows.h>
-
+#include "Code/Utility/Window.h"
+#include "Code\Core\Engine.h"
 using namespace TS;
 
 //! ログのエラーレベルによって色を付けてみるテストクラス
@@ -83,7 +84,7 @@ void SerializeTest()
 
 	if(1)
 	{
-		std::ifstream ifs("test.xml");
+		std::ifstream ifs("pokemon.xml");
 		cereal::XMLInputArchive i_archive(ifs);
 
 		Pokemon pokemon_i;
@@ -101,7 +102,7 @@ void SerializeTest()
 void UserLoggerTest()
 {
 	TS_LOG("◇ユーザ定義のロガーの動作確認テスト\n\n");
-    const SharedPtr<Logger> logger = TS_NEW(ColorLogger)();
+    SharedPtr<Logger> logger = TS_NEW(ColorLogger)();
 
 	TS_LOG("ユーザ定義のロガー未使用--\n");
 	SetUserLogger( nullptr );
@@ -221,5 +222,24 @@ void main()
 	FilePathTest();
 	SerializeTest();
 
-    GetMemorySystem().DumpLeak();
+	Window window;
+	window.Create("window1", "sample");
+	Window window2;
+	window2.Create("window2", "2",128,128,window.GetHandle());
+
+	window.Run();
+	window2.Run();
+
+	MSG msg;
+	while (window.IsRuning())
+	{
+		if (GetMessage(&msg, nullptr, 0, 0) != -1)
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		if (GetAsyncKeyState('A'))
+			window.Close();
+	}
+	GetEngine()->Destory();
 }

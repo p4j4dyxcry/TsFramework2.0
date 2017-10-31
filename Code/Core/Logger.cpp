@@ -4,24 +4,24 @@
 
 #include "Code/Utility/DoubleOutStream.h"
 #include "Memory/Pointer.h"
-
+#include "Engine.h"
 
 namespace TS
 {
     namespace
     {
-        Logger  g_DefaultLogger;
-        SharedPtr<Logger> g_pUserLogger = nullptr;
+        Logger  g_DefaultLogger;       
     }
 
     void SetUserLogger(const SharedPtr<Logger> logger)
     {
-        g_pUserLogger = logger;
+		GetEngine()->SetLogger(logger);
     }
 
     Logger& GetLogger()
     {
-        return g_pUserLogger != nullptr ? *g_pUserLogger : g_DefaultLogger;
+		WeakPtr<Logger> logger = GetEngine()->GetLogger();
+        return logger != nullptr ? *logger : g_DefaultLogger;
     }
 
 	const char* Logger::Format(const char * format, ...)

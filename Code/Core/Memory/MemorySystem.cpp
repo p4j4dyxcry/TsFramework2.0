@@ -1,5 +1,6 @@
 ﻿#include "Code/Core/Develop.h"
 #include "MemorySystem.h"
+#include "Code/Core/Engine.h"
 
 
 namespace TS
@@ -87,9 +88,6 @@ namespace TS
         return false;
     }
 
-
-
-
     void MemorySystem::AddAllocator(IAllocator* pAllocator)
     {
         m_Allocators.push_back(pAllocator);
@@ -106,14 +104,12 @@ namespace TS
     }
 
     MemorySystem& MemorySystem::Instance()
-    {
-        static MemorySystem instance;
-        return instance;
+    {        
+		return GetEngine()->GetMemorySystem();
     }
 
     MemorySystem::~MemorySystem()
     {
-        DumpLeak();
         if (m_pDefaultAllocator)
             delete m_pDefaultAllocator;       
     }
