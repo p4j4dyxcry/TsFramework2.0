@@ -2,7 +2,7 @@
 #include "Logger.h"
 #include <cstdarg>
 
-#include "Code/Utility/IO/DoubleOutStream.h"
+#include "Code/Utility/DoubleOutStream.h"
 #include "Memory/Pointer.h"
 
 

@@ -3,7 +3,7 @@
 #include "Code/Core/Memory/MemoryPool.h"
 #include "Code/Core/Memory/MemorySystem.h"
 #include "Code/Core/Memory/Pointer.h"
-#include "Code\Utility\File\FileUtility.h"
+#include "Code/Utility\FileUtility.h"
 #include <Windows.h>
 
 using namespace TS;
@@ -38,6 +38,74 @@ private:
 public:
 
 };
+#define CEREAL_SAVE_FUNCTION_NAME TsFrameWorkSerialize
+#define CEREAL_Load_FUNCTION_NAME TsFrameWorkDeSerialize
+#define CEREAL_XML_STRING_VALUE "TsFramework"
+#include <cereal/cereal.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/types/vector.hpp>
+
+struct Weapon
+{
+	std::string waza0;
+	std::string waza1;
+	std::string waza2;
+	std::string waza3;
+	template<class Archive>
+	void serialize(Archive & archive)
+	{
+		archive(CEREAL_NVP(waza0), CEREAL_NVP(waza1), CEREAL_NVP(waza2), CEREAL_NVP(waza3));
+	}
+};
+
+struct Pokemon 
+{
+	std::string name;
+	int hp = 0;
+	Weapon weapon;
+	std::vector<int> vector;
+
+	template <class Archive>
+	void serialize(Archive & archive)
+	{
+		archive(CEREAL_NVP(hp), 
+				CEREAL_NVP(weapon) );
+	}
+};
+void SerializeTest()
+{
+	Pokemon pokemon;
+	pokemon.name = "PIKACHU";
+	pokemon.hp = 100;
+
+	Pokemon pokemon2;
+	pokemon2.name = "HITOKAGE";
+	pokemon2.hp = 10;
+
+	if(1)
+	{
+		std::ofstream ofs("pokemon.xml");
+		cereal::XMLOutputArchive o_archive(ofs);
+		o_archive(CEREAL_NVP(pokemon));
+		o_archive(CEREAL_NVP(pokemon2));
+	}
+
+	if(0)
+	{
+		std::ifstream ifs("pokemon.xml");
+		cereal::XMLInputArchive i_archive(ifs);
+
+		Pokemon pokemon_i;
+		Pokemon pokemon_2;
+
+		i_archive(pokemon_i);
+		i_archive(pokemon_2);
+
+		std::cout << pokemon_2.name << std::endl;
+		std::cout << pokemon_2.hp << std::endl;
+	}
+
+}
 
 void UserLoggerTest()
 {
@@ -160,6 +228,7 @@ void main()
     CustomAllocatorTest();
 	SmartPointerTest();
 	FilePathTest();
+	SerializeTest();
 //    GetMemorySystem().DumpLeak();
 
     while (true) {};

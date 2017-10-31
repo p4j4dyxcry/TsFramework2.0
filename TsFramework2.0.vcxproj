@@ -61,7 +61,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>.;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;External\\cereal-1.2.2\\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <Link>
@@ -77,7 +77,7 @@
       <SDLCheck>true</SDLCheck>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>.;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;External\\cereal-1.2.2\\include</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <ForcedIncludeFiles>pch.h</ForcedIncludeFiles>
     </ClCompile>
@@ -89,7 +89,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;External\\cereal-1.2.2\\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
@@ -98,7 +98,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;External\\cereal-1.2.2\\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
@@ -114,8 +114,8 @@
     <ClInclude Include="Code\Core\Memory\MemorySystem.h" />
     <ClInclude Include="Code\Core\Memory\Pointer.h" />
     <ClInclude Include="Code\Core\Object.h" />
-    <ClInclude Include="Code\Utility\File\FileUtility.h" />
-    <ClInclude Include="Code\Utility\IO\DoubleOutStream.h" />
+    <ClInclude Include="Code\Utility\FileUtility.h" />
+    <ClInclude Include="Code\Utility\DoubleOutStream.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Code\Core\Scaler.h" />
     <ClInclude Include="Code\Core\Develop.h" />
@@ -128,7 +128,7 @@
     <ClCompile Include="Code\Core\Memory\MemorySystem.cpp" />
     <ClCompile Include="Code\Core\Memory\Pointer.cpp" />
     <ClCompile Include="Code\Core\Object.cpp" />
-    <ClCompile Include="Code\Utility\File\FileUtility.cpp" />
+    <ClCompile Include="Code\Utility\FileUtility.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
