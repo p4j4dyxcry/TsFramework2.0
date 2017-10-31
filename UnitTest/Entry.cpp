@@ -1,4 +1,5 @@
 ﻿
+#include "Code/Core/Types.h"
 #include "../Code/Core/Develop.h"
 #include "Code/Core/Memory/MemoryPool.h"
 #include "Code/Core/Memory/MemorySystem.h"
@@ -41,31 +42,16 @@ public:
 };
 
 
-struct Weapon
-{
-	std::string waza0;
-	std::string waza1;
-	std::string waza2;
-	std::string waza3;
-	template<class Archive>
-	void serialize(Archive & archive)
-	{
-		archive(CEREAL_NVP(waza0), CEREAL_NVP(waza1), CEREAL_NVP(waza2), CEREAL_NVP(waza3));
-	}
-};
-
 struct Pokemon 
 {
 	std::string name;
 	int hp = 0;
-	Weapon weapon;
-	std::vector<int> vector;
 
 	template <class Archive>
 	void serialize(Archive & archive)
 	{
 		archive(CEREAL_NVP(hp), 
-				CEREAL_NVP(weapon) );
+				CEREAL_NVP(name) );
 	}
 };
 void SerializeTest()
@@ -83,22 +69,30 @@ void SerializeTest()
 		std::ofstream ofs("pokemon.xml");
 		cereal::XMLOutputArchive o_archive(ofs);
 		o_archive(CEREAL_NVP(pokemon));
-		o_archive(CEREAL_NVP(pokemon2));
+        Array<Pokemon> pokemons(30);
+        o_archive(pokemons);
+
+        Array<int> ints(3);
+        o_archive(ints);
+
+        Array<bool> bools(15);
+        bools[5] = true;
+        o_archive(bools);
 	}
 
-	if(0)
+	if(1)
 	{
-		std::ifstream ifs("pokemon.xml");
+		std::ifstream ifs("test.xml");
 		cereal::XMLInputArchive i_archive(ifs);
 
 		Pokemon pokemon_i;
 		Pokemon pokemon_2;
 
 		i_archive(pokemon_i);
-		i_archive(pokemon_2);
+		//i_archive(pokemon_2);
 
-		std::cout << pokemon_2.name << std::endl;
-		std::cout << pokemon_2.hp << std::endl;
+		std::cout << pokemon_i.name << std::endl;
+		std::cout << pokemon_i.hp << std::endl;
 	}
 
 }
@@ -225,7 +219,8 @@ void main()
 	SmartPointerTest();
 	FilePathTest();
 	SerializeTest();
-//    GetMemorySystem().DumpLeak();
+
+    GetMemorySystem().DumpLeak();
 
     while (true) {};
 

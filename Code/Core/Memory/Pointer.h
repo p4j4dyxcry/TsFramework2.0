@@ -3,7 +3,7 @@
 
 namespace TS
 {
-	class ReferenceCounter
+	class ReferenceCounter : Object
 	{
 	private:
 		std::mutex m_mutex;
