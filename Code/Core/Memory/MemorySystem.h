@@ -8,7 +8,7 @@ namespace TS
     /**
     * \brief メモリ確保情報のメタデータを定義します
     */
-    struct MemoryMetaData
+    struct MemoryMetaData : Object
     {
         int         line;           //! ソースコード内での行番号
         const char* fileName;       //! ソースコードのファイル名
@@ -19,7 +19,7 @@ namespace TS
         IAllocator* pAllocator;     //! アロケータ
     };
 
-    class MemorySystem
+    class MemorySystem : Object
     {
     private:
         TS_DISABLE_COPY(MemorySystem);
@@ -54,7 +54,7 @@ namespace TS
     MemorySystem& GetMemorySystem();
 
     template <class T>
-    class STLAllocator
+    class STLAllocator : Object
     {
 
     public:
@@ -77,7 +77,11 @@ namespace TS
         }
     };
 
-
+    struct AllockHeaderBlock : Object
+    {
+        size_t      objectSize;
+        unsigned    arrayCount;
+    };
 
     /**
      * \brief メタ情報を埋め込みつつ可変長コンストラクタを呼ぶ仕組み
@@ -109,9 +113,15 @@ namespace TS
 
             IAllocator* pAllocator = memorySystem.GetSystemDefaultAllocator();
 
-            size_t memorySize = sizeof(TypeX);
+            const size_t memorySize = sizeof(TypeX) + sizeof(AllockHeaderBlock);
 
-            void* pMemory = pAllocator->Alloc(memorySize);
+            auto pMemory = static_cast<char*>(pAllocator->Alloc(memorySize));
+            AllockHeaderBlock* block = new(pMemory)AllockHeaderBlock;
+
+            block->objectSize = sizeof(TypeX);
+            block->arrayCount = 1;
+
+            pMemory += sizeof(AllockHeaderBlock);
             TypeX* pObject = new (pMemory)TypeX(std::forward<Params>(params)...);
 
 
@@ -131,18 +141,25 @@ namespace TS
 
     /**
      * \brief メモリを開放する
-     *        TODO 配列のデストラクタに未対応
      * \param ptr メモリを開放するポインタ
      */
     template <typename TypeX> 
-    void DeleteMemory(TypeX* ptr)
+    void DeleteMemory(TypeX*& ptr)
     {
 
         auto& memorySystem = GetMemorySystem();
 
         IAllocator* pAllocator = memorySystem.FindAllocator(ptr);
 
-        ptr->~TypeX();
+        AllockHeaderBlock* meta = reinterpret_cast<AllockHeaderBlock*>(ptr);
+        meta--;
+
+        TypeX* pCurrent = ptr;
+        for(unsigned i =0 ; i<meta->arrayCount ; ++i)
+        {
+            pCurrent->~TypeX();
+            pCurrent += meta->objectSize;
+        }
         pAllocator->Free(ptr);
 
         if( memorySystem.IsEnableMemoryLeak())
@@ -154,7 +171,7 @@ namespace TS
      * \param itemCount 配列の数
      */
     template <typename TypeX>
-    void AllocArray(const int line,
+    TypeX* AllocArray(const int line,
                     const char* filename,
                     const char* functionname,
                     const int itemCount)
@@ -163,14 +180,24 @@ namespace TS
 
         IAllocator* pAllocator = GetMemorySystem().GetSystemDefaultAllocator();
 
-        const size_t memorySize = sizeof(TypeX) * itemCount;
+        const size_t memorySize = sizeof(TypeX) * itemCount + sizeof(TypeX);
 
-        void* pMemory = pAllocator->Alloc(memorySize);
+        auto pMemory = static_cast<char*>(pAllocator->Alloc(memorySize));
+
+        AllockHeaderBlock* block = new(pMemory)AllockHeaderBlock;
+
+        block->objectSize = sizeof(TypeX);
+        block->arrayCount = itemCount;
+
+        pMemory += sizeof(AllockHeaderBlock);
 
         TypeX* pCurrent = reinterpret_cast<TypeX*>(pMemory);
 
         for(int i=0; i<itemCount ; ++i)
-            pCurrent++ = new (pMemory)TypeX();
+        {
+            pCurrent = new (pMemory)TypeX;
+            ++pCurrent;
+        }
 
         // ! メタ情報を埋め込んでおく
         if (memorySystem.IsEnableMemoryLeak())
@@ -187,6 +214,7 @@ namespace TS
             memory_meta.typeData = typeid(TypeX).name();
             memorySystem.RegisterMemoryMetaData(memory_meta);
         }
+        return reinterpret_cast<TypeX*>(pMemory);
     }
 
 
