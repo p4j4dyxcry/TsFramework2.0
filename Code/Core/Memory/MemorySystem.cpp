@@ -113,10 +113,9 @@ namespace TS
 
     MemorySystem::~MemorySystem()
     {
-        if (m_pDefaultAllocator)
-            delete m_pDefaultAllocator;
-
         DumpLeak();
+        if (m_pDefaultAllocator)
+            delete m_pDefaultAllocator;       
     }
 
     IAllocator* MemorySystem::FindAllocator(void* ptr)

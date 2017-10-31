@@ -6,6 +6,7 @@
 #include "Code/Core/Memory/Pointer.h"
 #include "Code/Utility\FileUtility.h"
 #include "Code/Utility/Serialize.h"
+#include "Code/Utility/StopWatch.h"
 #include <Windows.h>
 
 using namespace TS;
@@ -16,7 +17,7 @@ class ColorLogger : public Logger
 private:
 	void  PreLog(LogMetaData& metaData) override
 	{
-		HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);
+	    const HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);
 		WORD attr = 0;
 		attr |= FOREGROUND_INTENSITY;
 
@@ -33,8 +34,8 @@ private:
 
     void  EndLog(LogMetaData& metaData)override
     {
-        HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);
-        WORD attr = (FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN);
+        const HANDLE hCons = GetStdHandle(STD_OUTPUT_HANDLE);
+        const WORD attr = (FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN);
         SetConsoleTextAttribute(hCons, attr);
     }
 public:
@@ -100,7 +101,7 @@ void SerializeTest()
 void UserLoggerTest()
 {
 	TS_LOG("◇ユーザ定義のロガーの動作確認テスト\n\n");
-	SharedPtr<Logger> logger = TS_NEW(ColorLogger)();
+    const SharedPtr<Logger> logger = TS_NEW(ColorLogger)();
 
 	TS_LOG("ユーザ定義のロガー未使用--\n");
 	SetUserLogger( nullptr );
@@ -148,25 +149,25 @@ void CustomAllocatorTest()
 {
 	TS_LOG("◇メモリアロケーションテスト \n\n");
 	TS_LOG("デフォルトアロケータ -> \n");	
-    auto start = clock();
+    
+    StopWatch stop_watch;
+    stop_watch.Start();
     for (int i = 0; i<50000; ++i)
     {
         int * ptr = new int(i);
 
         delete ptr;
     }
-    double res = (clock() - start) / (double)CLOCKS_PER_SEC;
-    TS_LOG("%f(秒)\n", res);
+    TS_LOG("4.2%f(ミリ秒)\n", stop_watch.ElpasedmSecond());
 	TS_LOG("カスタムアロケータ 　-> \n");
-    start = clock();
+    stop_watch.Start();
     for (int i = 0; i<50000; ++i)
     {
         int * ptr = TS_NEW(int)(i);
         TS_DELETE(ptr);
     }
-
-    res = (clock() - start) / (double)CLOCKS_PER_SEC;
-	TS_LOG("%f(秒)\n", res);
+    
+	TS_LOG("4.2%f(ミリ秒)\n", stop_watch.ElpasedmSecond());
 	TS_LOG("\n----------------------------------- \n");
 
 }
@@ -221,7 +222,4 @@ void main()
 	SerializeTest();
 
     GetMemorySystem().DumpLeak();
-
-    while (true) {};
-
 }
