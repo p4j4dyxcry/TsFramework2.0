@@ -1,4 +1,5 @@
-﻿#include "Engine.h"
+﻿#define TS_ENGINE_METHOD_OVERRIDE
+#include "Engine.h"
 
 namespace TS
 {
@@ -15,13 +16,33 @@ namespace TS
 
     Engine* Engine::Instance()
     {        
+        return g_engine;
+    }
+
+	Engine * Engine::Create(EngineSetting option)
+	{
 		if (g_engine == nullptr && g_isCreated == false)
 		{
 			g_isCreated = true;
 			g_engine = new Engine();
+
+			//! メモリ関連の初期化
+			g_engine->GetMemorySystem().EnableMemoryLeakCheck();
+			g_engine->GetMemorySystem().GetDefaultAllocator();
+
+			//! メインウィンドウの作成
+			g_engine->m_MainWindow = TS_NEW(Window)();
+
+			g_engine->m_MainWindow->Create("_tsframework", 
+										  option.windowTitle.c_str(),
+										  option.windowWidth,
+										  option.windowHeight);
+			g_engine->m_MainWindow->Run();
+
+			g_engine->OnInitialize();
 		}
-        return g_engine;
-    }
+		return Instance();
+	}
 
     Engine::~Engine()
     {		
@@ -34,6 +55,10 @@ namespace TS
 
 		if (engine == nullptr)
 			return;
+
+		engine->OnFinalize();
+
+		engine->m_MainWindow.Release();
 		engine->m_pUserLogger.Release();
         if (engine->m_pMemorySystem !=nullptr)
         {
@@ -49,6 +74,16 @@ namespace TS
     {
         m_pUserLogger = logger;
     }
+
+	bool Engine::IsRuning()const
+	{
+		return m_MainWindow->IsRuning();
+	}
+
+	void Engine::UpdateEngine()
+	{
+		OnUpdate();
+	}
 
     SharedPtr<Logger> Engine::GetLogger() const
     {

@@ -1,12 +1,38 @@
 ﻿#pragma once
 #include "Thread.h"
+#include "Code/Utility/Window.h"
 
 namespace TS
 {
+	struct EngineSetting 
+	{
+	public:
+		std::string windowTitle;
+		int  windowWidth;
+		int  windowHeight;
+		EngineSetting()
+			:windowTitle("TsFramework")
+			,windowWidth(1280)
+			,windowHeight(768)
+		{};
+
+	};
+
+	/**
+	* \brief エンドユーザが定義できる関数
+	*/
+	class IEngine : public IMutex
+	{
+	public:
+		virtual bool OnInitialize() { return true; };
+		virtual void OnUpdate()		{};
+		virtual bool OnFinalize()	{ return true; };
+	};
+
     /**
 	 * \brief TsFrameworkのコアシステム
 	 */
-	class Engine : public IMutex
+	class Engine : public IEngine
 	{
 	private:
 		TS_DISABLE_COPY(Engine);
@@ -26,6 +52,11 @@ namespace TS
 	     */
 	    static Engine* Instance();
 
+		/**
+		* \brief エンジンの破棄
+		*/
+		static Engine* Create(EngineSetting option = EngineSetting());
+
 	    /**
 	     * \brief エンジンの破棄
 	     */
@@ -36,6 +67,10 @@ namespace TS
 	     * \param logger 
 	     */
 	    void SetLogger(const SharedPtr<Logger>& logger);
+
+		bool IsRuning()const;
+
+		void UpdateEngine();
 
 	    /**
 	     * \brief ロガーを取得する。何も設定していない場合はデフォルトを取得する
@@ -48,10 +83,16 @@ namespace TS
 	     * \return 
 	     */
 	    MemorySystem&     GetMemorySystem() const;
+#ifdef TS_ENGINE_METHOD_OVERRIDE
+		virtual bool OnInitialize()override;
+		virtual void OnUpdate()override;
+		virtual bool OnFinalize()override;
+#endif
 
 	private:
 		MemorySystem*	  m_pMemorySystem;
 		SharedPtr<Logger> m_pUserLogger;
+		SharedPtr<Window> m_MainWindow;
 	};
 
     /**
