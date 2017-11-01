@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 namespace TS
 {
@@ -13,7 +13,6 @@ namespace TS
          * \return クラスの名前
          */
         const char*  GetClassName() const;
-
 
         /**
          * \brief このクラスを文字列に変換します

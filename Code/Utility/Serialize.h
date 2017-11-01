@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../Core/Types.h"
 
 #define CEREAL_SAVE_FUNCTION_NAME TsFrameWorkSerialize

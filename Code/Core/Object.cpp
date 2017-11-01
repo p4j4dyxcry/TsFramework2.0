@@ -1,4 +1,4 @@
-#include "Object.h"
+﻿#include "Object.h"
 #include <typeinfo>
 
 const char* TS::Object::GetClassName() const

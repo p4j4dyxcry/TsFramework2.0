@@ -1,4 +1,4 @@
-#include "INamed.h"
+﻿#include "INamed.h"
 
 namespace TS
 {

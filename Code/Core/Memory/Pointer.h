@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 
 namespace TS
@@ -297,7 +297,7 @@ namespace TS
                 return;
 
             m_pRefCounter->SubRef();
-            if (m_pRefCounter->IsRemovePointer())
+            if (m_pRefCounter->IsRefZero())
             {
                 DeletePointer();
             }

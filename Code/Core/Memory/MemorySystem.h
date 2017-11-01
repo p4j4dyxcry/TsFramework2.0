@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Allocator.h"
 #include <unordered_map>
 

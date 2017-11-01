@@ -1,4 +1,4 @@
-#include "StopWatch.h"
+﻿#include "StopWatch.h"
 
 using namespace std::chrono;
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Object.h"
 #include "Develop.h"
 
@@ -11,6 +11,7 @@ namespace TS
         char m_iname[1024];
 
     public:        
+
         const char * GetIName()const;       
         bool SetIName(const char *);  
 

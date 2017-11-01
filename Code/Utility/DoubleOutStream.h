@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 /**
  * \brief ２つのストリームに同時にデータを出力するためのクラス
  *        
