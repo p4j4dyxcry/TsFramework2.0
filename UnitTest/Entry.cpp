@@ -159,7 +159,7 @@ void CustomAllocatorTest()
 
         delete ptr;
     }
-    TS_LOG("4.2%f(ミリ秒)\n", stop_watch.ElpasedmSecond());
+    TS_LOG("%4.2f(ミリ秒)\n", stop_watch.ElpasedmSecond());
 	TS_LOG("カスタムアロケータ 　-> \n");
     stop_watch.Start();
     for (int i = 0; i<50000; ++i)
@@ -168,7 +168,7 @@ void CustomAllocatorTest()
         TS_DELETE(ptr);
     }
     
-	TS_LOG("4.2%f(ミリ秒)\n", stop_watch.ElpasedmSecond());
+	TS_LOG("%4.2f(ミリ秒)\n", stop_watch.ElpasedmSecond());
 	TS_LOG("\n----------------------------------- \n");
 
 }
@@ -241,5 +241,6 @@ void main()
 		if (GetAsyncKeyState('A'))
 			window.Close();
 	}
+	TS_NEW(int)();
 	GetEngine()->Destory();
 }

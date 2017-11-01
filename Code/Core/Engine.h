@@ -29,7 +29,7 @@ namespace TS
 	    /**
 	     * \brief エンジンの破棄
 	     */
-	    void Destory();
+	    static void Destory();
 
 	    /**
 	     * \brief 独自で定義したロガーを使用する場合はこの関数で設定する

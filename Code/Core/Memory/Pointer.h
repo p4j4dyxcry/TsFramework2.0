@@ -304,6 +304,7 @@ namespace TS
             if (m_pRefCounter->Invalid())
             {
                 TS_DELETE(m_pRefCounter);
+				m_pRefCounter = nullptr;
             }
         }
 
@@ -351,6 +352,7 @@ namespace TS
             if (m_pRefCounter->Invalid())
             {
                 TS_DELETE(m_pRefCounter);
+				m_pRefCounter = nullptr;
             }
         }
 	public:
