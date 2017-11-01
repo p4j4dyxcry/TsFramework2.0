@@ -1,11 +1,12 @@
-﻿#pragma once
+#pragma once
 
-#include <mutex>
 #include "Code/Core/Develop.h"
-#include "Code/Core/Object.h"
 #include "Code/Core/Thread.h"
 namespace TS
 {
+    /**
+     * \brief メモリプールを定義するためのインタフェース
+     */
     class IMemoryPool : public IMutex
     {
     public:
@@ -104,7 +105,7 @@ namespace TS
 
         /**
          * \brief チャンク内のメモリを0クリアする。この関数はデバッグ実行時のみ有効化される
-         * \param pBlock 
+         * \param pChunk 
          */
         void ClearMemory(Chunk* pChunk);
     private:

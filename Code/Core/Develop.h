@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Logger.h"
 
@@ -33,7 +33,7 @@
 //!  関数が例外を投げないことを宣言
 #define TS_NOEXCEPT throw()
 
-//! ログを出力します。
+//! ログを出力
 #define TS_LOG(...)\
     {\
         TS::LogMetaData metadata; \
@@ -44,7 +44,7 @@
         TS::GetLogger().Log(metadata, TS::GetLogger().Format(__VA_ARGS__));\
     }
 
-//! デバッグログを出力します。
+//! デバッグログを出力
 #ifdef _DEBUG
     #define TS_LOG_DEBUG(...)\
         {\
@@ -71,7 +71,7 @@
         TS::GetLogger().Log(metadata, TS::GetLogger().Format(__VA_ARGS__));\
     }
 
-//! エラーログを出力します。
+//! エラーログを出力
 #define TS_LOG_ERROR(...)\
     {\
         TS::LogMetaData metadata; \

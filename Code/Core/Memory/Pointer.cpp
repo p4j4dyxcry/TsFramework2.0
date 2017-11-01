@@ -27,7 +27,7 @@ namespace TS
         --(m_observerCount);
     }
 
-    bool ReferenceCounter::IsRemovePointer() const
+    bool ReferenceCounter::IsRefZero() const
     {
         return m_referenceCount <= 0;
     }

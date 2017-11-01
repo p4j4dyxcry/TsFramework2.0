@@ -108,14 +108,16 @@
   <ItemGroup>
     <ClInclude Include="Code\Core\Engine.h" />
     <ClInclude Include="Code\Core\ForwardDefinition.h" />
-    <ClInclude Include="Code\Core\Thread.h" />
     <ClInclude Include="Code\Core\Memory\Allocator.h" />
     <ClInclude Include="Code\Core\INamed.h" />
     <ClInclude Include="Code\Core\Logger.h" />
     <ClInclude Include="Code\Core\Memory\MemoryPool.h" />
     <ClInclude Include="Code\Core\Memory\MemorySystem.h" />
+    <ClInclude Include="Code\Core\Memory\New.hpp" />
     <ClInclude Include="Code\Core\Memory\Pointer.h" />
+    <ClInclude Include="Code\Core\Memory\STLAllocator.h" />
     <ClInclude Include="Code\Core\Object.h" />
+    <ClInclude Include="Code\Core\Thread.h" />
     <ClInclude Include="Code\Core\Types.h" />
     <ClInclude Include="Code\Utility\FileUtility.h" />
     <ClInclude Include="Code\Utility\DoubleOutStream.h" />
@@ -137,6 +139,7 @@
     <ClCompile Include="Code\Core\Object.cpp" />
     <ClCompile Include="Code\Utility\FileUtility.cpp" />
     <ClCompile Include="Code\Utility\StopWatch.cpp" />
+    <ClCompile Include="Code\Utility\Window.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

@@ -1,4 +1,4 @@
-﻿#include "Code/Core/Develop.h"
+#include "Code/Core/Develop.h"
 #include "MemorySystem.h"
 #include "Code/Core/Engine.h"
 
@@ -7,6 +7,7 @@ namespace TS
 {
     //!-------------------------------------------------------------------------
     // シンプルな標準アロケータを用意しておく
+    // .cppに定義しておくことでエンドユーザからは見えないようにしておく
     //!-------------------------------------------------------------------------
     class SimpleAllocator : public IAllocator
     {
@@ -58,9 +59,9 @@ namespace TS
         return str.c_str();
     }
 
-    void* SimpleAllocator::Alloc(size_t size)
+    void* SimpleAllocator::Alloc(const size_t size)
     {
-        void * ptr = nullptr;
+        void * ptr;
         if (size <= s_MinPool->GetChunkSize())
         {
             if ((ptr = s_MinPool->Alloc(size)) != nullptr)
@@ -73,7 +74,7 @@ namespace TS
                 return ptr;
         }
 
-        if (ptr = s_LargePool->Alloc(size))
+        if ( (ptr = s_LargePool->Alloc(size)) != nullptr)
             return ptr;
 
         return nullptr;
@@ -95,17 +96,14 @@ namespace TS
 
     MemorySystem& GetMemorySystem()
     {
-        return MemorySystem::Instance();
+        return Engine::Instance()->GetMemorySystem();
     }
 
     MemorySystem::MemorySystem() :
-        m_isLeakChek(false)
+        m_isLeakChek(false), 
+        m_pDefaultAllocator(nullptr), 
+        m_pUserAllocator(nullptr)
     {
-    }
-
-    MemorySystem& MemorySystem::Instance()
-    {        
-		return GetEngine()->GetMemorySystem();
     }
 
     MemorySystem::~MemorySystem()
@@ -196,13 +194,6 @@ namespace TS
 
     void MemorySystem::DumpInfo()
     {
-
-        //TS_LOG("アロケータ情報をダンプします。\n");
-        //for (auto element : m_Allocators)
-        //{
-        //    TS_LOG(element->ToString());
-        //}
-
         if (m_MetaDatas.size() > 0)
         {
             TS_LOG("%d個のメモリを確保中\n", m_MetaDatas.size());

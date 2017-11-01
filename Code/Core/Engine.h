@@ -1,48 +1,62 @@
 #pragma once
+#include "Thread.h"
 
 namespace TS
 {
-	class Engine : IMutex
+    /**
+	 * \brief TsFrameworkのコアシステム
+	 */
+	class Engine : public IMutex
 	{
 	private:
 		TS_DISABLE_COPY(Engine);
 		TS_DISABLE_MOVE(Engine);
-		Engine() 
-		{
-			m_pMemorySystem = new MemorySystem();
-		};
+	    Engine();;
 	public:
-		static Engine* Instance()
-		{
-			static Engine engine;
-			return &engine;
-		}
 
-		void Destory()
-		{
-			m_pUserLogger.Release();
-			m_pMemorySystem->DumpLeak();
-			delete m_pMemorySystem;
-		}
+	    /**
+        * \brief デストラクタ
+        */
+        virtual ~Engine();
 
-		void SetLogger(SharedPtr<Logger> logger)
-		{
-			m_pUserLogger = logger;
-		}
-		SharedPtr<Logger> GetLogger()const
-		{
-			return m_pUserLogger;
-		}
 
-		MemorySystem& GetMemorySystem()
-		{
-			return *m_pMemorySystem;
-		}
+	    /**
+	     * \brief インスタンスを取得する
+	     * \return 
+	     */
+	    static Engine* Instance();
+
+	    /**
+	     * \brief エンジンの破棄
+	     */
+	    void Destory();
+
+	    /**
+	     * \brief 独自で定義したロガーを使用する場合はこの関数で設定する
+	     * \param logger 
+	     */
+	    void SetLogger(const SharedPtr<Logger>& logger);
+
+	    /**
+	     * \brief ロガーを取得する。何も設定していない場合はデフォルトを取得する
+	     * \return 
+	     */
+	    SharedPtr<Logger> GetLogger() const;
+
+	    /**
+	     * \brief メモリシステムを取得する
+	     * \return 
+	     */
+	    MemorySystem&     GetMemorySystem() const;
 
 	private:
 		MemorySystem*	  m_pMemorySystem;
 		SharedPtr<Logger> m_pUserLogger;
 	};
 
+    /**
+	 * \brief エンジンを取得　この関数は Engine.Instance()と等しい
+	 * \return 
+	 */
 	Engine* GetEngine();
 }

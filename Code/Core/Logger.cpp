@@ -13,7 +13,7 @@ namespace TS
         Logger  g_DefaultLogger;       
     }
 
-    void SetUserLogger(const SharedPtr<Logger> logger)
+    void SetUserLogger(const SharedPtr<Logger>& logger)
     {
 		GetEngine()->SetLogger(logger);
     }

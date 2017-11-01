@@ -4,142 +4,86 @@
 
 namespace TS
 {
+    /**
+	 * \brief ウィンドウクラス
+	 */
 	class Window : IMutex
 	{
 	public:
-		Window():m_WindowHandle(nullptr)
-		{
-		}
+	    /**
+		 * \brief コンストラクタ
+		 */
+	    Window();
 
-		bool Create( const char* _className,
-					 const char* _windowTitle,
-					 const int width  = 1280,
-					 const int height = 720,
-					 const HWND owner = nullptr)
-		{
-			TS_LOCK( Mutex());
+	    /**
+		 * \brief windowを作成する
+		 * \param _className    一意なウィンドウの内部名
+		 * \param _windowTitle  ウィンドウタイトル
+		 * \param width         幅
+		 * \param height        高さ
+		 * \param owner         親ウィンドウのハンドル
+		 * \return 成功ならtrue
+		 */
+	    bool Create(const char* _className,
+	                const char* _windowTitle,
+	                const int width = 1280,
+	                const int height = 720,
+	                const HWND owner = nullptr);
 
-			if (m_WindowHandle != nullptr)
-				return false;
+	    /**
+		 * \brief ウィンドウハンドルを取得する
+		 * \return 
+		 */
+	    HWND GetHandle() const;
 
-			// Create application window
-			WNDCLASSEX wc =
-			{
-				sizeof(WNDCLASSEX),					
-				CS_CLASSDC,
-				Window::CallWindowProcedure,		//�v���V�[�W��
-				0,
-				0,
-				GetModuleHandle(nullptr),			//�v���Z�XID
-				nullptr,				
-				LoadCursor(nullptr, IDC_ARROW),
-				nullptr,
-				nullptr,
-				_className,
-				nullptr 
-			};
+	    /**
+	     * \brief ウィンドウを作動させる
+	     */
+	    void Run();
 
-			if (RegisterClassEx(&wc) == 0)
-			{
-				TS_LOG("�w�肳�ꂽ���ʎq�͊��ɓo�^�ς݂ł��B\n%S\n", _className);
-				return false;
-			}
-			HWND hwnd = CreateWindow(	_className, 
-										_windowTitle, 
-										WS_OVERLAPPEDWINDOW, 
-										CW_USEDEFAULT,
-										CW_USEDEFAULT, 
-										width, 
-										height, 
-										owner, 
-										nullptr,
-										wc.hInstance, 
-										this);
-			
-			strcpy_s(m_ClassName, 256, _className);
-			m_Width = width;
-			m_Height = height;
-			m_WindowHandle = hwnd;
-			m_ParentWindowHandle = owner;
+	    /**
+	     * \brief ウィンドウを閉じる
+	     */
+	    void Close();
 
-			return true;
-		}
+	    /**
+		 * \brief ウィンドウが作動しているかどうか
+		 * \return 
+		 */
+	    bool IsRuning() const;
 
-		HWND GetHandle()const
-		{
-			return m_WindowHandle;
-		}
+	    /**
+		 * \brief ウィンドウプロシージャ
+		 * \param hWnd 
+		 * \param msg 
+		 * \param wp 
+		 * \param lp 
+		 * \return 
+		 */
+	    virtual LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
+	    /**
+		 * \brief 親ウィンドウの取得
+		 * \return 
+		 */
+	    Window* GetParent() const;
 
-		void Run()
-		{
-			TS_LOCK(Mutex());
-
-			if (m_WindowHandle == nullptr)
-				return;
-
-			m_isRuning = true;
-			ShowWindow(m_WindowHandle, SW_SHOWDEFAULT);
-			UpdateWindow(m_WindowHandle);
-		}
-
-		void Close()
-		{
-			//TS_LOCK(Mutex());
-		
-			if (m_WindowHandle == 0)
-				return;
-
-			m_isRuning = false;
-			DestroyWindow(m_WindowHandle);
-			m_WindowHandle = nullptr;
-		}
-
-		bool IsRuning()const
-		{
-			return m_isRuning;
-		}
-
-		virtual LRESULT WINAPI WindowProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
-		{
-			if (msg == WM_CLOSE || msg == WM_DESTROY)
-			{				
-				Close();
-				return 0;
-			}
-
-			return DefWindowProc(hWnd, msg, wp, lp);
-		}
-		Window* GetParent()
-		{
-			return GetWindow(m_ParentWindowHandle);
-		}
-
-		static Window* GetWindow(HWND hWnd)
-		{
-			return (Window*)(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-		}
+	    /**
+		 * \brief 指定されたハンドルを持つWindowクラスを取得する
+		 * \param hWnd 
+		 * \return 存在しなければ null
+		 */
+	    static Window* GetWindow(HWND hWnd);
 
 	private:
-		static LRESULT WINAPI CallWindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
-		{
-			Window* window = Window::GetWindow(hWnd);
-
-			if (window != nullptr)
-				return window->WindowProc(hWnd, msg, wp, lp);
-			else
-			{
-				if (msg == WM_CREATE)
-				{
-					window = reinterpret_cast<Window*>(((LPCREATESTRUCT)lp)->lpCreateParams);
-				}
-				if (window != nullptr)
-				{
-					SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
-				}
-			}
-
-			return DefWindowProc(hWnd, msg, wp, lp);;
-		}
+	    /**
+		 * \brief ウィンドウプロシージャを呼び出す
+		 * \param hWnd 
+		 * \param msg 
+		 * \param wp 
+		 * \param lp 
+		 * \return 
+		 */
+	    static LRESULT WINAPI CallWindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp);
 		HWND m_WindowHandle;
 		HWND m_ParentWindowHandle;
 		char m_ClassName[256];

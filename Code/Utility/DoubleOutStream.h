@@ -1,20 +1,27 @@
 #pragma once
 /**
- * \brief �g������
- * 
- * �ȉ��̗l�ɋL�q���邱�ƂŃR���\�[���ƃt�@�C���ɓ����o�͂��邱�Ƃ��ł���B
- * 
- * std::ostream os("Debug.log");
- * TS::cout2( os , std::cout ) << "x= " << x << endl;
+ * \brief ２つのストリームに同時にデータを出力するためのクラス
+ *        
+ *        例)以下の様に記述することでコンソールとファイルに同時出力することができる。
+ *           std::ostream os("Debug.log");
+ *           TS::cout2( os , std::cout ) << "x= " << x << endl;
  */
 namespace TS
 {
+    /**
+     * \brief ２つのストリームに同時にデータを出力するためのクラス
+     */
     typedef class DoubleOutStream
     {
     private:
         std::ostream& _stream0;
         std::ostream& _stream1;
     public:
+        /**
+         * \brief コンストラクタ
+         * \param _os1 
+         * \param _os2 
+         */
         DoubleOutStream( std::ostream& _os1 ,
                std::ostream& _os2 = std::cout )
             :_stream0(_os1)

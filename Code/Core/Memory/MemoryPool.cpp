@@ -1,4 +1,4 @@
-﻿#include "MemoryPool.h"
+#include "MemoryPool.h"
 
 namespace TS
 {

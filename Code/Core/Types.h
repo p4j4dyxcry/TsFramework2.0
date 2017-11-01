@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace TS
 {
@@ -39,12 +39,12 @@ namespace TS
             TS_DELETE(value);
         }
 
-        Array(Array&& rhs)
+        Array(Array&& rhs) TS_NOEXCEPT
         {
             *this = rhs;
         }
 
-        Array& operator=(Array&& rhs)
+        Array& operator=(Array&& rhs) TS_NOEXCEPT
         {
             array_size = rhs.array_size;
             value = rhs.value;

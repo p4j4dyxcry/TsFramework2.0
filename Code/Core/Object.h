@@ -2,32 +2,35 @@
 
 namespace TS
 {
+    /**
+     * \brief å…¨ã¦ã®åŸºåº•ã¨ãªã‚‹ã‚¯ãƒ©ã‚¹
+     */
     class Object
     {
     public:
         /**
-         * \brief ƒNƒ‰ƒX‚Ì–¼‘O‚ğæ“¾‚µ‚Ü‚·
-         * \return ƒNƒ‰ƒX‚Ì–¼‘O
+         * \brief ã‚¯ãƒ©ã‚¹ã®åå‰ã‚’å–å¾—ã—ã¾ã™
+         * \return ã‚¯ãƒ©ã‚¹ã®åå‰
          */
         const char*  GetClassName() const;
 
 
         /**
-         * \brief ‚±‚ÌƒNƒ‰ƒX‚ğ•¶š—ñ‚É•ÏŠ·‚µ‚Ü‚·
-         * \return •¶š—ñ‰»‚³‚ê‚½ƒNƒ‰ƒX
+         * \brief ã“ã®ã‚¯ãƒ©ã‚¹ã‚’æ–‡å­—åˆ—ã«å¤‰æ›ã—ã¾ã™
+         * \return æ–‡å­—åˆ—åŒ–ã•ã‚ŒãŸã‚¯ãƒ©ã‚¹
          */
         virtual const char* ToString()const;
 
         
         /**
-        * \brief const char * ‚Ö‚ÌˆÃ–Ù‚ÌƒLƒƒƒXƒg‚Å‚·B
-        *        ƒfƒtƒHƒ‹ƒg‚Å‚ÍToString()‚Æ“¯‚¶‹““®‚É‚È‚è‚Ü‚·B
+        * \brief const char * ã¸ã®æš—é»™ã®ã‚­ãƒ£ã‚¹ãƒˆã§ã™ã€‚
+        *        ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§ã¯ToString()ã¨åŒã˜æŒ™å‹•ã«ãªã‚Šã¾ã™ã€‚
         */
         virtual operator const char*() const;
 
         
         /**
-         * \brief ƒfƒXƒgƒ‰ƒNƒ^
+         * \brief ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
          */
         virtual ~Object() = default;
     };

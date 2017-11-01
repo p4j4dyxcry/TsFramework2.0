@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 namespace TS
 {
@@ -43,7 +43,7 @@ namespace TS
      * \brief ユーザ定義のロガーを設定します。
      * \param logger ユーザが作成したロガークラスです。
      */
-    void SetUserLogger(const SharedPtr<Logger> logger);
+    void SetUserLogger(const SharedPtr<Logger>& logger);
     
     /**
     * \brief 現在適用されているロガーを取得します。デフォルトのロガーはprintf関数に近い動作をします。
