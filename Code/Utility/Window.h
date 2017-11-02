@@ -74,6 +74,8 @@ namespace TS
 		 */
 	    static Window* GetWindow(HWND hWnd);
 
+        static void ProsessMessage();
+
 	private:
 	    /**
 		 * \brief ウィンドウプロシージャを呼び出す

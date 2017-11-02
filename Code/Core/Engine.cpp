@@ -38,8 +38,6 @@ namespace TS
 										  option.windowWidth,
 										  option.windowHeight);
 			g_engine->m_MainWindow->Run();
-
-			g_engine->OnInitialize();
 		}
 		return Instance();
 	}
@@ -55,8 +53,6 @@ namespace TS
 
 		if (engine == nullptr)
 			return;
-
-		engine->OnFinalize();
 
 		engine->m_MainWindow.Release();
 		engine->m_pUserLogger.Release();
@@ -82,7 +78,7 @@ namespace TS
 
 	void Engine::UpdateEngine()
 	{
-		OnUpdate();
+        Window::ProsessMessage();
 	}
 
     SharedPtr<Logger> Engine::GetLogger() const

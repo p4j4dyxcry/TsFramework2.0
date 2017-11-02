@@ -115,6 +115,16 @@ namespace TS
         return reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
     }
 
+    void Window::ProsessMessage()
+    {
+        MSG msg;
+        if (GetMessage(&msg, nullptr, 0, 0) != -1)
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
+
     LRESULT Window::CallWindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
     {
         Window* window = Window::GetWindow(hWnd);
@@ -125,7 +135,7 @@ namespace TS
         {
             if (msg == WM_CREATE)
             {
-                window = reinterpret_cast<Window*>(((LPCREATESTRUCT)lp)->lpCreateParams);
+                window = reinterpret_cast<Window*>(reinterpret_cast<LPCREATESTRUCT>(lp)->lpCreateParams);
             }
             if (window != nullptr)
             {

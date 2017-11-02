@@ -18,21 +18,10 @@ namespace TS
 
 	};
 
-	/**
-	* \brief エンドユーザが定義できる関数
-	*/
-	class IEngine : public IMutex
-	{
-	public:
-		virtual bool OnInitialize() { return true; };
-		virtual void OnUpdate()		{};
-		virtual bool OnFinalize()	{ return true; };
-	};
-
     /**
 	 * \brief TsFrameworkのコアシステム
 	 */
-	class Engine : public IEngine
+	class Engine : public IMutex
 	{
 	private:
 		TS_DISABLE_COPY(Engine);
@@ -83,12 +72,6 @@ namespace TS
 	     * \return 
 	     */
 	    MemorySystem&     GetMemorySystem() const;
-#ifdef TS_ENGINE_METHOD_OVERRIDE
-		virtual bool OnInitialize()override;
-		virtual void OnUpdate()override;
-		virtual bool OnFinalize()override;
-#endif
-
 	private:
 		MemorySystem*	  m_pMemorySystem;
 		SharedPtr<Logger> m_pUserLogger;
