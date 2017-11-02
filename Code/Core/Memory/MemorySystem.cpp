@@ -76,7 +76,6 @@ namespace TS
 
         if ( (ptr = s_LargePool->Alloc(size)) != nullptr)
             return ptr;
-
         return nullptr;
     }
 
@@ -85,7 +84,6 @@ namespace TS
         if (s_MinPool->From(ptr))     return s_MinPool->Free(ptr);
         if (s_DefaultPool->From(ptr)) return s_DefaultPool->Free(ptr);
         if (s_LargePool->From(ptr))   return s_LargePool->Free(ptr);
-
         return false;
     }
 
@@ -114,8 +112,8 @@ namespace TS
 
     IAllocator* MemorySystem::FindAllocator(void* ptr)
     {
-        if( IsEnableMemoryLeak() )
-            return m_MetaDatas[ptr].pAllocator;
+        //if( IsEnableMemoryLeak() )
+        //    return m_MetaDatas[ptr].pAllocator;
 
         //todo 
         return m_pDefaultAllocator;

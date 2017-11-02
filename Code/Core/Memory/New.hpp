@@ -74,7 +74,7 @@ namespace TS
             {
                 memory_meta.pAllocator = pAllocator;
                 memory_meta.memorySize = memorySize;
-                memory_meta.pointer = pMemory;
+                memory_meta.pointer = pObject;
                 memory_meta.typeData = typeid(TypeX).name();
                 memorySystem.RegisterMemoryMetaData(memory_meta);
 
@@ -98,17 +98,19 @@ namespace TS
 
         AllockHeaderBlock* meta = reinterpret_cast<AllockHeaderBlock*>(ptr);
         meta--;
+        void * pMemoryHead = meta;
+
 
         TypeX* pCurrent = ptr;
         for (unsigned i = 0; i<meta->arrayCount; ++i)
         {
-            pCurrent->~TypeX();
-            pCurrent += meta->objectSize;
+            pCurrent[i].~TypeX();
         }
-        pAllocator->Free(ptr);
 
         if (memorySystem.IsEnableMemoryLeak())
             memorySystem.RemoveMemoryMetaData(ptr);
+
+        pAllocator->Free(pMemoryHead);
         ptr = nullptr;
     }
 
@@ -126,7 +128,7 @@ namespace TS
 
         IAllocator* pAllocator = GetMemorySystem().GetSystemDefaultAllocator();
 
-        const size_t memorySize = sizeof(TypeX) * itemCount + sizeof(TypeX);
+        const size_t memorySize = sizeof(TypeX) * itemCount + sizeof(AllockHeaderBlock);
 
         auto pMemory = static_cast<char*>(pAllocator->Alloc(memorySize));
 
@@ -141,7 +143,7 @@ namespace TS
 
         for (int i = 0; i<itemCount; ++i)
         {
-            pCurrent = new (pCurrent)TypeX;
+            new (pCurrent)TypeX;
             ++pCurrent;
         }
 

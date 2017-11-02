@@ -208,7 +208,8 @@ namespace TS
             << "\t" << "メモリサイズ    " << GetMemorySize() << std::endl
             << "\t" << "チャンクサイズ  " << GetChunkSize() << std::endl
             << "\t" << "チャンク数      " << GetChunkCount() << std::endl
-            << "\t" << "メモリ使用量(%%) " << GetUsingMemorySize() * 100 / static_cast<double>(GetMemorySize()) << "%%" << std::endl;
+            << "\t" << "使用済チャンク数" << GetUsingMemorySize() / GetChunkSize() << std::endl
+            << "\t" << "メモリ使用量(%%) "<< GetUsingMemorySize() * 100 / static_cast<double>(GetMemorySize()) << "%%" << std::endl;
         str = ss.str();
         return str.c_str();
     }
