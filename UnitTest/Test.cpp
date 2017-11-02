@@ -1,4 +1,6 @@
-﻿#include "Code/Core/Types.h"
+﻿#include <Windows.h>
+
+#include "Code/Core/Types.h"
 #include "../Code/Core/Develop.h"
 #include "Code/Core/Memory/MemoryPool.h"
 #include "Code/Core/Memory/MemorySystem.h"
@@ -6,7 +8,6 @@
 #include "Code/Utility\FileUtility.h"
 #include "Code/Utility/Serialize.h"
 #include "Code/Utility/StopWatch.h"
-#include <Windows.h>
 #include "Code/Utility/Window.h"
 #include "Code\Core\Engine.h"
 using namespace TS;
@@ -45,7 +46,7 @@ public:
 
 struct Pokemon
 {
-	std::string name;
+	TS::TsString name;
 	int hp = 0;
 
 	template <class Archive>
@@ -158,7 +159,7 @@ void CustomAllocatorTest()
 
 		delete ptr;
 	}
-	TS_LOG("%4.2f(ミリ秒)\n", stop_watch.ElpasedmSecond());
+	TS_LOG("%4.6f(ミリ秒)\n", stop_watch.Elpased()* 1000.0);
 	TS_LOG("カスタムアロケータ 　-> \n");
 	stop_watch.Start();
 	for (int i = 0; i<50000; ++i)
@@ -167,7 +168,7 @@ void CustomAllocatorTest()
 		TS_DELETE(ptr);
 	}
 
-	TS_LOG("%4.2f(ミリ秒)\n", stop_watch.ElpasedmSecond());
+	TS_LOG("%4.6f(ミリ秒)\n", stop_watch.Elpased() * 1000.0);
 	TS_LOG("\n----------------------------------- \n");
 
 }

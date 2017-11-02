@@ -9,6 +9,13 @@ namespace TS
 		bool	g_isCreated = false;
 	}
 
+    EngineSetting::WindowSetting::WindowSetting()  : Title("TsFramework")
+                                                   , Width(1280)
+                                                   , Height(768)
+    {}
+
+    EngineSetting::EngineSetting(){}
+
     Engine::Engine()
     {
         m_pMemorySystem = new MemorySystem();
@@ -34,11 +41,28 @@ namespace TS
 			g_engine->m_MainWindow = TS_NEW(Window)();
 
 			g_engine->m_MainWindow->Create("_tsframework", 
-										  option.windowTitle.c_str(),
-										  option.windowWidth,
-										  option.windowHeight);
+										  option.Window.Title.c_str(),
+										  option.Window.Width,
+										  option.Window.Height);
 			g_engine->m_MainWindow->Run();
-		}
+
+            g_engine->m_StopWatch.Start();
+            //日付のDump
+			{
+                time_t t = time(nullptr);
+
+                struct tm lt;
+                localtime_s(&lt, &t);
+
+                std::stringstream s;
+                s << "20" << lt.tm_year - 100 << "/" << lt.tm_mon + 1 << "/" << lt.tm_mday << " ";
+                s << lt.tm_hour << "時" << lt.tm_min << "分" << lt.tm_sec << "秒";
+                TS_LOG("//!---------------------------------------------\n");
+                TS_LOG("//! エンジン初期化 ::%s\n", s.str().c_str());
+                TS_LOG("//!---------------------------------------------\n");
+			}
+
+		}        
 		return Instance();
 	}
 
@@ -78,7 +102,16 @@ namespace TS
 
 	void Engine::UpdateEngine()
 	{
+        m_StopWatch.Recode();
         Window::ProsessMessage();
+
+        double delta = m_StopWatch.GetLastRecodeDelta();
+	    while(delta <= 1.0 / 64.0)
+	    {
+            delta = m_StopWatch.GetLastRecodeDelta();
+	    }
+
+        TS_LOG("fps = %lf \n", 1.0 / m_StopWatch.GetAvgRecodeIntarval() );    
 	}
 
     SharedPtr<Logger> Engine::GetLogger() const
@@ -89,6 +122,11 @@ namespace TS
     MemorySystem& Engine::GetMemorySystem() const
     {
         return *m_pMemorySystem;
+    }
+
+    double Engine::GetDeltaTime() const
+    {
+        return m_StopWatch.GetPrevDelta();
     }
 
     Engine* GetEngine()

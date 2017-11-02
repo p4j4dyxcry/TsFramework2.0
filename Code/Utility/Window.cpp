@@ -118,10 +118,13 @@ namespace TS
     void Window::ProsessMessage()
     {
         MSG msg;
-        if (GetMessage(&msg, nullptr, 0, 0) != -1)
+        if(PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE))
         {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            if (GetMessage(&msg, nullptr, 0, 0) != -1)
+            {
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
         }
     }
 

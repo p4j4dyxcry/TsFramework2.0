@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Memory/STLAllocator.h"
 
 namespace TS
 {
@@ -85,7 +86,8 @@ namespace TS
         T* value;
     };
 
-
+    #define TsVector(type) std::vector<type,TS::STLAllocator<type>>
+    typedef std::basic_string<char,std::char_traits<char>, TS::STLAllocator<char>> TsString;
 }
 
 

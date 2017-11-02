@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <direct.h>
 #include <shlwapi.h>
+#include "Serialize.h"
 #pragma comment(lib, "shlwapi.lib")
 
 
@@ -10,7 +11,7 @@ namespace TS
 {
 	bool FileUtility::IsFullPath(const char* path)
 	{		
-		return std::string(path).find(':') > 0;
+		return TsString(path).find(':') > 0;
 	}
 
 	int FileUtility::FileSize(const char* path)

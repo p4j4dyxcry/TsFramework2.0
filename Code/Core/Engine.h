@@ -1,21 +1,27 @@
 ﻿#pragma once
 #include "Thread.h"
 #include "Code/Utility/Window.h"
+#include "Code/Utility/StopWatch.h"
 
 namespace TS
 {
+    /**
+	 * \brief エンジン起動オプション
+	 */
 	struct EngineSetting 
 	{
-	public:
-		std::string windowTitle;
-		int  windowWidth;
-		int  windowHeight;
-		EngineSetting()
-			:windowTitle("TsFramework")
-			,windowWidth(1280)
-			,windowHeight(768)
-		{};
+    public:
+        struct WindowSetting
+        {
+            std::string Title;
+            int  Width;
+            int  Height;
+            WindowSetting();
+        };
 
+        WindowSetting Window;
+
+	    EngineSetting();
 	};
 
     /**
@@ -52,14 +58,23 @@ namespace TS
 	    static void Destory();
 
 	    /**
-	     * \brief 独自で定義したロガーを使用する場合はこの関数で設定する
-	     * \param logger 
-	     */
-	    void SetLogger(const SharedPtr<Logger>& logger);
+         * \brief エンジンを更新する
+         */
+        void UpdateEngine();
 
+
+	    /**
+		 * \brief エンジン稼働中かどうか
+		 * \return 稼働中ならtrue
+		 */
 		bool IsRuning()const;
 
-		void UpdateEngine();
+
+        /**
+        * \brief 独自で定義したロガーを使用する場合はこの関数で設定する
+        * \param logger
+        */
+        void SetLogger(const SharedPtr<Logger>& logger);
 
 	    /**
 	     * \brief ロガーを取得する。何も設定していない場合はデフォルトを取得する
@@ -72,10 +87,14 @@ namespace TS
 	     * \return 
 	     */
 	    MemorySystem&     GetMemorySystem() const;
-	private:
+
+        double GetDeltaTime()const;
+	   
+	 private:
 		MemorySystem*	  m_pMemorySystem;
 		SharedPtr<Logger> m_pUserLogger;
 		SharedPtr<Window> m_MainWindow;
+        StopWatch         m_StopWatch;
 	};
 
     /**
