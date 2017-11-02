@@ -102,16 +102,17 @@ namespace TS
 
 	void Engine::UpdateEngine()
 	{
+        static  int framecount = 0;
         m_StopWatch.Recode();
         Window::ProsessMessage();
 
         double delta = m_StopWatch.GetLastRecodeDelta();
-	    while(delta <= 1.0 / 64.0)
+	    while(delta <= 1.0 / 60.0)
 	    {
             delta = m_StopWatch.GetLastRecodeDelta();
 	    }
-
-        TS_LOG("fps = %lf \n", 1.0 / m_StopWatch.GetAvgRecodeIntarval() );    
+        if( ++framecount % 60 == 0)
+            TS_LOG("fps = %lf \n", 1.0 / m_StopWatch.GetAvgRecodeIntarval() );    
 	}
 
     SharedPtr<Logger> Engine::GetLogger() const
