@@ -33,9 +33,31 @@ namespace TS
     {
     public:
         virtual ~Logger() = default;
+        /**
+		 * \brief フォーマットを含む文字列を解決し、結合します。
+		 * \param format 
+		 * \param ... 可変長引数
+		 * \return 解決された文字列 (※この領域は共有領域 )
+		 */
 		virtual const char* Format(const char * format, ...);
-        virtual void PreLog(LogMetaData& metaData) {};
+
+        /**
+         * \brief ログの前処理を行います。
+         * \param metaData メタデータ
+         */
+        virtual void PreLog(LogMetaData& metaData){};
+
+        /**
+         * \brief ログデータを処理します
+         * \param metaData 
+         * \param format 解決済文字列
+         */
         virtual void Log(LogMetaData& metaData , const char * format);
+
+        /**
+         * \brief ログデータの後処理を行います
+         * \param metaData メタデータ
+         */
         virtual void EndLog(LogMetaData& metaData) {};
     };
 

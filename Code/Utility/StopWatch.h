@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include <bemapiset.h>
 
 namespace TS
 {
@@ -9,37 +8,45 @@ namespace TS
     class StopWatch
     {
     public:
-
+        /**
+         * \brief コンストラクタ
+         */
         StopWatch();
 
         /**
-         * \brief ミリ秒で時間経過を取得する
-         * \return 
+         * \brief 時間経過を取得する
+         * \return 秒
          */
         double Elpased()const;
 
         /**
         * \brief 経過の平均レコードを取得する
-        * \tparam T 秒、ミリ秒、マイクロ秒ナノ秒
-        * \return
+        * \return 秒
         */
         double GetAvgRecodeIntarval()const;
 
-        double GetLastRecodeDelta()const;
+        /**
+         * \brief 最終レコードからの経過を求める
+         * \return 秒
+         */
+        double ElpasedByLastRecode()const;
 
+        /**
+         * \brief 最終レコードのひとつ前から最終レコードまでの経過を求める
+         * \return 秒
+         */
         double GetPrevDelta()const;
+
         /**
          * \brief 計測開始
          */
         void Start();
 
-
         /**
-         * \brief 結果を記録しておく
-         * \return 
+         * \brief 結果を記録する
+         * \return Startからの経過秒
          */
         double Recode();
-
 
         /**
          * \brief 結果一覧を削除する

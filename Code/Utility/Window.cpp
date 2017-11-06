@@ -17,40 +17,45 @@ namespace TS
         if (m_WindowHandle != nullptr)
             return false;
 
-        // Create application window
+        // 定義作成
         WNDCLASSEX wc =
         {
             sizeof(WNDCLASSEX),
-            CS_CLASSDC,
-            Window::CallWindowProcedure, //プロシージャ
-            0,
-            0,
-            GetModuleHandle(nullptr), //プロセスID
-            nullptr,
-            LoadCursor(nullptr, IDC_ARROW),
-            nullptr,
-            nullptr,
-            _className,
-            nullptr
+            CS_CLASSDC,                         //! ウィンドウスタイル
+            Window::CallWindowProcedure,        //! プロシージャ呼び出し
+            0,                                  //! クラス拡張
+            0,                                  //! ウィンドウ拡張
+            GetModuleHandle(nullptr),           //プロセスID
+            nullptr,                            //! アイコン
+            LoadCursor(nullptr, IDC_ARROW),     //! カーソル
+            nullptr,                            //! 背面色
+            nullptr,                            //! メニュー
+            _className,                         //! ユニークな名前
+            nullptr                             //! サムネイル
         };
 
+        //! 登録要求
         if (RegisterClassEx(&wc) == 0)
         {
             TS_LOG("指定された識別子は既に登録済みです。\n%S\n", _className);
             return false;
         }
-        HWND hwnd = CreateWindow( _className,
-            _windowTitle,
-            WS_OVERLAPPEDWINDOW,
-            CW_USEDEFAULT,
-            CW_USEDEFAULT,
-            width,
-            height,
-            owner,
-            nullptr,
-            wc.hInstance,
-            this);
 
+        //! インスタンス化
+        const HWND hwnd = CreateWindow(
+            _className,                         //! ユニークな名前
+            _windowTitle,                       //! タイトル
+            WS_OVERLAPPEDWINDOW,                //! スタイル
+            CW_USEDEFAULT,                      //! X
+            CW_USEDEFAULT,                      //! Y
+            width,                              //! 幅
+            height,                             //! 高さ
+            owner,                              //! 親ウィンドウへのハンドル
+            nullptr,                            //! メニューへのハンドル
+            wc.hInstance,                       //! プロセスID
+            this);                              //! カスタム領域
+
+        //! プロパティにコピー
         strcpy_s(m_ClassName, 256, _className);
         m_Width = width;
         m_Height = height;
@@ -67,8 +72,6 @@ namespace TS
 
     void Window::Run()
     {
-        TS_LOCK(Mutex());
-
         if (m_WindowHandle == nullptr)
             return;
 
@@ -79,9 +82,7 @@ namespace TS
 
     void Window::Close()
     {
-        //TS_LOCK(Mutex());
-
-        if (m_WindowHandle == 0)
+        if (m_WindowHandle == nullptr)
             return;
 
         m_isRuning = false;
@@ -118,6 +119,7 @@ namespace TS
     void Window::ProsessMessage()
     {
         MSG msg;
+        //! 直にGetMessageを呼び出すと操作していないときに止まるので注意。
         if(PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE))
         {
             if (GetMessage(&msg, nullptr, 0, 0) != -1)
@@ -128,24 +130,34 @@ namespace TS
         }
     }
 
+    void Window::GetClientSize(int& _outWidth, int& _outHeight) const
+    {
+        RECT rect;
+        GetClientRect(m_WindowHandle,&rect);
+        _outWidth = rect.right;
+        _outHeight = rect.bottom;
+    }
+
     LRESULT Window::CallWindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
     {
-        Window* window = Window::GetWindow(hWnd);
+        Window* window = GetWindow(hWnd);
 
+        //! プロシージャを呼び出す
         if (window != nullptr)
             return window->WindowProc(hWnd, msg, wp, lp);
-        else
+
+        //! ここに来るということは関連付けがまだできていない
+        if (msg == WM_CREATE)
         {
-            if (msg == WM_CREATE)
-            {
-                window = reinterpret_cast<Window*>(reinterpret_cast<LPCREATESTRUCT>(lp)->lpCreateParams);
-            }
-            if (window != nullptr)
-            {
-                SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
-            }
+            //! カスタム領域からWindowクラスを持ってくる
+            window = reinterpret_cast<Window*>(reinterpret_cast<LPCREATESTRUCT>(lp)->lpCreateParams);
+        }
+        if (window != nullptr)
+        {
+            //! 関連付け
+            SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
         }
 
-        return DefWindowProc(hWnd, msg, wp, lp);;
+        return DefWindowProc(hWnd, msg, wp, lp);
     }
 }

@@ -21,6 +21,14 @@
 #include <vector>
 
 //! externals
+#include <Windows.h>
+
+#include <d3d11.h>
+#include <d3dcompiler.h>
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib,"d3dcompiler.lib")
 
 //! TsFramework
 #include "Code/Core/ForwardDefinition.h"
@@ -28,3 +36,9 @@
 #include "Code/Core/Time.h"
 #include "Code/Core/Memory/MemorySystem.h"
 #include "Code/Core/Memory/Pointer.h"
+
+//! Gfx
+#include "Code/Gfx/DxPointer.h"
+#include "Code/Gfx/IGfxResource.h"
+
+#include "Code/Gfx/GfxDevice.h"

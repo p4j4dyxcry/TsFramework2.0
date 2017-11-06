@@ -74,7 +74,17 @@ namespace TS
 		 */
 	    static Window* GetWindow(HWND hWnd);
 
+	    /**
+         * \brief インスタンス化されている全てのウィンドウのメッセージ処理を行う
+         */
         static void ProsessMessage();
+
+	    /**
+         * \brief クライアントサイズを取得する
+         * \param _outWidth     幅　　戻り値
+         * \param _outHeight    高さ　戻り値
+         */
+        void GetClientSize(int& _outWidth, int& _outHeight) const;
 
 	private:
 	    /**

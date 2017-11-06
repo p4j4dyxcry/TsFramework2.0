@@ -1,6 +1,6 @@
 ﻿#define TS_ENGINE_METHOD_OVERRIDE
 #include "Engine.h"
-
+#include "Code/Gfx/GfxCore.h"
 namespace TS
 {
 	namespace
@@ -47,7 +47,7 @@ namespace TS
 			g_engine->m_MainWindow->Run();
 
             g_engine->m_StopWatch.Start();
-            //日付のDump
+            //! 日付のDump
 			{
                 time_t t = time(nullptr);
 
@@ -61,8 +61,9 @@ namespace TS
                 TS_LOG("//! エンジン初期化 ::%s\n", s.str().c_str());
                 TS_LOG("//!---------------------------------------------\n");
 			}
-
-		}        
+		    
+            SharedPtr<GfxCore> core =  TS_NEW(GfxCore)(g_engine->m_MainWindow->GetHandle());
+;		}        
 		return Instance();
 	}
 
@@ -105,15 +106,16 @@ namespace TS
         m_StopWatch.Recode();
         Window::ProsessMessage();
 
-        double delta = m_StopWatch.GetLastRecodeDelta();
+        double delta = m_StopWatch.ElpasedByLastRecode();
 
         //! 60フレームに合わせる
 	    while(delta <= OneFrameBy60Fps - FLT_EPSILON )
 	    {
-            delta = m_StopWatch.GetLastRecodeDelta();
+            delta = m_StopWatch.ElpasedByLastRecode();
 	    }
 
-	    if(m_StopWatch.Elpased() >= 1.0)
+        //! 5秒に1回fpsをダンプしておく
+	    if(m_StopWatch.Elpased() >= 5.0)
         {
             TS_LOG("fps = %2.2lf \n", 1.0f / m_StopWatch.GetAvgRecodeIntarval() );
             m_StopWatch.Start();

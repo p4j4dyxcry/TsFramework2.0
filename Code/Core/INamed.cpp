@@ -29,11 +29,6 @@ namespace TS
         return true;
     }
 
-    const char* INamed::ToString() const
-    {
-        return m_iname;
-    }
-
     INamed::INamed()
     {
         const int array_size = sizeof(m_iname) / sizeof(m_iname[0]);

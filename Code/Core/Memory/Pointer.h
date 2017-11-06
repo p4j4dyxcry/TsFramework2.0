@@ -108,7 +108,7 @@ namespace TS
         * \brief ポインタとして振る舞うためのオペレータ
         */        
 		virtual T&  operator * () { return *m_nativePointer; }
-		virtual T*& operator ->() { return m_nativePointer; }
+		virtual T* operator ->() { return m_nativePointer; }
 		virtual const T&  operator * ()const { return *m_nativePointer; }
 		virtual const T* operator ->()const { return m_nativePointer; }		
         bool operator==(const IPointer& rhs){ return m_nativePointer == rhs.m_nativePointer; }
@@ -362,7 +362,7 @@ namespace TS
 		WeakPtr() 
 			: IRefPtr<T>(nullptr,nullptr){}
 
-		WeakPtr(SharedPtr<T> &rhs) 
+		WeakPtr(const SharedPtr<T> &rhs) 
 			: IRefPtr<T>(rhs)
 		{
 			CopyRefCounterFromArgument(rhs);
@@ -370,7 +370,7 @@ namespace TS
 				m_pRefCounter->AddObserver();
 		}
 
-		WeakPtr(WeakPtr&rhs)
+		WeakPtr(const WeakPtr&rhs)
 			: IRefPtr<T>(rhs)
 		{
 			CopyRefCounterFromArgument(rhs);

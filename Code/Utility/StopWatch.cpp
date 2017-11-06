@@ -43,7 +43,7 @@ namespace TS
     }
 
 
-    double StopWatch::GetLastRecodeDelta()const
+    double StopWatch::ElpasedByLastRecode()const
     {
         auto it = m_recode.begin();
 

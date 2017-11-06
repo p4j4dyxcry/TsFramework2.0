@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Object.h"
 #include "Develop.h"
 
 namespace TS
@@ -15,8 +14,6 @@ namespace TS
         const char * GetIName()const;       
         bool SetIName(const char *);  
 
-        const char* ToString() const override ;
-        
         INamed();
         virtual ~INamed() = default;
 

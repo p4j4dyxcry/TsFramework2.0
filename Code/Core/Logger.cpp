@@ -20,7 +20,12 @@ namespace TS
 
     Logger& GetLogger()
     {
-		WeakPtr<Logger> logger = GetEngine()->GetLogger();
+        const auto engine = GetEngine();
+
+        if (engine == nullptr)
+            return g_DefaultLogger;
+
+		WeakPtr<Logger> logger = engine->GetLogger();
         return logger != nullptr ? *logger : g_DefaultLogger;
     }
 
