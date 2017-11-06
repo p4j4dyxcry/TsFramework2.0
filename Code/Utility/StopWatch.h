@@ -9,6 +9,9 @@ namespace TS
     class StopWatch
     {
     public:
+
+        StopWatch();
+
         /**
          * \brief ミリ秒で時間経過を取得する
          * \return 
@@ -51,7 +54,7 @@ namespace TS
     protected:
         LARGE_INTEGER m_startTime;
         LARGE_INTEGER m_frequency;
-        unsigned int m_maxRecode = 15;
+        unsigned int m_maxRecode = 60;
         std::list<LARGE_INTEGER> m_recode;
     };
 

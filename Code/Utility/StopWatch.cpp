@@ -5,6 +5,11 @@ using namespace std::chrono;
 
 namespace TS
 {
+    StopWatch::StopWatch()
+    {
+        QueryPerformanceFrequency(&m_frequency);
+    }
+
     double StopWatch::Elpased()const
     {        
         LARGE_INTEGER t;
@@ -15,8 +20,7 @@ namespace TS
 
     void StopWatch::Start()
     {
-        QueryPerformanceCounter(&m_startTime);
-        QueryPerformanceFrequency(&m_frequency);
+        QueryPerformanceCounter(&m_startTime);        
         Recode();
     }
     double StopWatch::Recode()
