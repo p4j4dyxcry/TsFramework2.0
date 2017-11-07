@@ -12,13 +12,55 @@ namespace TS
     EngineSetting::WindowSetting::WindowSetting()  : Title("TsFramework")
                                                    , Width(1280)
                                                    , Height(768)
-    {}
+                                                   
+	{
+	    
+	}
+
+    EngineSetting::TimeScaleSetting::TimeScaleSetting():Framerate(60)
+    {
+
+    }
 
     EngineSetting::EngineSetting(){}
 
     Engine::Engine()
     {
         m_pMemorySystem = new MemorySystem();
+    }
+
+    bool Engine::Initialize(EngineSetting& option)
+    {
+        TS_DUMP_CURRENT_TIME("エンジン初期化");
+        //! メモリ関連の初期化
+        
+        GetMemorySystem().EnableMemoryLeakCheck();
+        GetMemorySystem().GetDefaultAllocator();
+
+        //! メインウィンドウの作成
+        m_pMainWindow = TS_NEW(Window)();
+        m_pMainWindow->Create("_tsframework",
+            option.Window.Title.c_str(),
+            option.Window.Width,
+            option.Window.Height);
+        m_pMainWindow->Run();
+
+        m_pTimeSystem = TS_NEW(TimeSystem)(option.Time.Framerate);
+        m_pGfxCore    = TS_NEW(GfxCore)(m_pMainWindow->GetHandle());
+        
+        return true;
+    }
+
+    void Engine::Destroy()
+    {
+        m_pMainWindow.Release();
+        m_pUserLogger.Release();
+        if (m_pMemorySystem != nullptr)
+        {
+            m_pMemorySystem->DumpLeak();
+            delete m_pMemorySystem;
+            m_pMemorySystem = nullptr;
+        }
     }
 
     Engine* Engine::Instance()
@@ -32,37 +74,7 @@ namespace TS
 		{
 			g_isCreated = true;
 			g_engine = new Engine();
-
-			//! メモリ関連の初期化
-			g_engine->GetMemorySystem().EnableMemoryLeakCheck();
-			g_engine->GetMemorySystem().GetDefaultAllocator();
-
-			//! メインウィンドウの作成
-			g_engine->m_MainWindow = TS_NEW(Window)();
-
-			g_engine->m_MainWindow->Create("_tsframework", 
-										  option.Window.Title.c_str(),
-										  option.Window.Width,
-										  option.Window.Height);
-			g_engine->m_MainWindow->Run();
-
-            g_engine->m_StopWatch.Start();
-            //! 日付のDump
-			{
-                time_t t = time(nullptr);
-
-                struct tm lt;
-                localtime_s(&lt, &t);
-
-                std::stringstream s;
-                s << "20" << lt.tm_year - 100 << "/" << lt.tm_mon + 1 << "/" << lt.tm_mday << " ";
-                s << lt.tm_hour << "時" << lt.tm_min << "分" << lt.tm_sec << "秒";
-                TS_LOG("//!---------------------------------------------\n");
-                TS_LOG("//! エンジン初期化 ::%s\n", s.str().c_str());
-                TS_LOG("//!---------------------------------------------\n");
-			}
-		    
-            SharedPtr<GfxCore> core =  TS_NEW(GfxCore)(g_engine->m_MainWindow->GetHandle());
+            g_engine->Initialize(option);			
 ;		}        
 		return Instance();
 	}
@@ -79,14 +91,6 @@ namespace TS
 		if (engine == nullptr)
 			return;
 
-		engine->m_MainWindow.Release();
-		engine->m_pUserLogger.Release();
-        if (engine->m_pMemorySystem !=nullptr)
-        {
-			engine->m_pMemorySystem->DumpLeak();
-            delete engine->m_pMemorySystem;
-			engine->m_pMemorySystem = nullptr;
-        }
 		delete g_engine;
 		g_engine = nullptr;
     }
@@ -98,28 +102,13 @@ namespace TS
 
 	bool Engine::IsRuning()const
 	{
-		return m_MainWindow->IsRuning();
+		return m_pMainWindow->IsRuning();
 	}
 
 	void Engine::UpdateEngine()
 	{
-        m_StopWatch.Recode();
+        m_pTimeSystem->BeginFrame();
         Window::ProsessMessage();
-
-        double delta = m_StopWatch.ElpasedByLastRecode();
-
-        //! 60フレームに合わせる
-	    while(delta <= OneFrameBy60Fps - FLT_EPSILON )
-	    {
-            delta = m_StopWatch.ElpasedByLastRecode();
-	    }
-
-        //! 5秒に1回fpsをダンプしておく
-	    if(m_StopWatch.Elpased() >= 5.0)
-        {
-            TS_LOG("fps = %2.2lf \n", 1.0f / m_StopWatch.GetAvgRecodeIntarval() );
-            m_StopWatch.Start();
-        }
 	}
 
     SharedPtr<Logger> Engine::GetLogger() const
@@ -132,9 +121,25 @@ namespace TS
         return *m_pMemorySystem;
     }
 
-    double Engine::GetDeltaTime() const
+    SharedPtr<TimeSystem>& Engine::GetTimeSystem() 
     {
-        return m_StopWatch.GetPrevDelta();
+        return m_pTimeSystem;
+    }
+
+    void Engine::EndFrame()
+    {
+        m_pTimeSystem->WaitRemaining();
+        m_pTimeSystem->EndFrame();
+    }
+
+    SharedPtr<GfxCore>& Engine::GetGfxSystem()
+    {
+        return m_pGfxCore;
+    }
+
+    const SharedPtr<GfxCore>& Engine::GetGfxSystem() const
+    {
+        return m_pGfxCore;
     }
 
     Engine* GetEngine()

@@ -1,5 +1,9 @@
 ﻿#pragma once
 
+/**
+* \brief 開発支援機能
+*/
+
 #include "Logger.h"
 
 //!  コピーコンストラクタとコピー代入演算子を禁止
@@ -81,3 +85,30 @@
         metadata.logLevel = TS::Log_Error; \
         TS::GetLogger().Log(metadata, TS::GetLogger().Format(__VA_ARGS__));\
     }
+
+#define TS_ASSERT(flag , ...)\
+{\
+    if(flag)\
+    {\
+        TS_LOG_ERROR(__VA_ARGS__);\
+        MessageBox(nullptr, TS::GetLogger().Format(__VA_ARGS__),"致命的なエラー",MB_OK);\
+        \
+    }\
+}
+
+#define TS_DUMP_CURRENT_TIME(action) \
+{\
+    time_t t = time(nullptr);\
+    \
+    struct tm lt;\
+    localtime_s(&lt, &t);\
+    \
+    std::stringstream s;\
+    s << action << " ::";\
+    s << "20" << lt.tm_year - 100 << "/" << lt.tm_mon + 1 << "/" << lt.tm_mday << " ";\
+    s << lt.tm_hour << "時" << lt.tm_min << "分" << lt.tm_sec << "秒";\
+    \
+    TS_LOG("//!---------------------------------------------\n");\
+    TS_LOG("//! %s\n", s.str().c_str());\
+    TS_LOG("//!---------------------------------------------\n");\
+}

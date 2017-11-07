@@ -120,6 +120,7 @@
     <ClInclude Include="Code\Core\Object.h" />
     <ClInclude Include="Code\Core\Thread.h" />
     <ClInclude Include="Code\Core\Time.h" />
+    <ClInclude Include="Code\Core\TimeSystem.h" />
     <ClInclude Include="Code\Core\Types.h" />
     <ClInclude Include="Code\Gfx\DxPointer.h" />
     <ClInclude Include="Code\Gfx\GfxCore.h" />
@@ -135,6 +136,7 @@
     <ClInclude Include="Code\Utility\Serialize.h" />
     <ClInclude Include="Code\Utility\Serialize\Array.hpp" />
     <ClInclude Include="Code\Utility\StopWatch.h" />
+    <ClInclude Include="Code\Utility\StringUtility.h" />
     <ClInclude Include="Code\Utility\Window.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Code\Core\Develop.h" />
@@ -148,6 +150,7 @@
     <ClCompile Include="Code\Core\Memory\MemorySystem.cpp" />
     <ClCompile Include="Code\Core\Memory\Pointer.cpp" />
     <ClCompile Include="Code\Core\Object.cpp" />
+    <ClCompile Include="Code\Core\TimeSystem.cpp" />
     <ClCompile Include="Code\Gfx\GfxCore.cpp" />
     <ClCompile Include="Code\Gfx\GfxDevice.cpp" />
     <ClCompile Include="Code\Gfx\GfxDeviceContext.cpp" />

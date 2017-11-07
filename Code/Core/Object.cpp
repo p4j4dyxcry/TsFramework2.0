@@ -1,14 +1,14 @@
 ﻿#include "Object.h"
 #include <typeinfo>
 
-const char* TS::Object::GetClassName() const
+const char* TS::Object::GetTypeName() const
 {
     return typeid(*this).name();
 }
 
 const char* TS::Object::ToString() const
 {
-    return GetClassName();
+    return GetTypeName();
 }
 
 TS::Object::operator const char*() const

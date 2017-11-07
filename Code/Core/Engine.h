@@ -2,6 +2,8 @@
 #include "Thread.h"
 #include "Code/Utility/Window.h"
 #include "Code/Utility/StopWatch.h"
+#include "TimeSystem.h"
+
 
 namespace TS
 {
@@ -16,12 +18,37 @@ namespace TS
             std::string Title;
             int  Width;
             int  Height;
+
+            template <class Archive>
+            void serialize(Archive & archive)
+            {
+                archive(CEREAL_NVP(Title), CEREAL_NVP(Width),CEREAL_NVP(Height));
+            }
+           
             WindowSetting();
         };
 
-        WindowSetting Window;
+        struct TimeScaleSetting
+        {
+            int  Framerate;
 
+            TimeScaleSetting();
+            template <class Archive>
+            void serialize(Archive & archive)
+            {
+                archive(CEREAL_NVP(Framerate));
+            }
+        };
+        WindowSetting Window;
+        TimeScaleSetting Time;
 	    EngineSetting();
+
+        template <class Archive>
+        void serialize(Archive & archive)
+        {
+            archive(CEREAL_NVP(Window),
+                CEREAL_NVP(Time));
+        }
 	};
 
     /**
@@ -32,7 +59,12 @@ namespace TS
 	private:
 		TS_DISABLE_COPY(Engine);
 		TS_DISABLE_MOVE(Engine);
-	    Engine();;
+	    Engine();
+
+        bool Initialize(EngineSetting& option);
+
+        void Destroy();
+
 	public:
 
 	    /**
@@ -88,13 +120,30 @@ namespace TS
 	     */
 	    MemorySystem&     GetMemorySystem() const;
 
-        double GetDeltaTime()const;
+	    /**
+         * \brief タイムシステムを取得する
+         * \return 
+         */
+        SharedPtr<TimeSystem>& GetTimeSystem();
+
+	    /**
+         * \brief フレーム終了処理
+         */
+        void EndFrame();
+
+        /**
+        * \brief グラフィックスシステムを取得する
+        * \return
+        */
+        SharedPtr<GfxCore>& GetGfxSystem();
+	    const SharedPtr<GfxCore>& GetGfxSystem()const;
 	   
 	 private:
-		MemorySystem*	  m_pMemorySystem;
-		SharedPtr<Logger> m_pUserLogger;
-		SharedPtr<Window> m_MainWindow;
-        StopWatch         m_StopWatch;
+		MemorySystem*	        m_pMemorySystem;
+		SharedPtr<Logger>       m_pUserLogger;
+		SharedPtr<Window>       m_pMainWindow;
+        SharedPtr<GfxCore>      m_pGfxCore;
+        SharedPtr<TimeSystem>   m_pTimeSystem;
 	};
 
     /**

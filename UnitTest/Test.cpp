@@ -8,9 +8,12 @@
 #include "Code/Utility\FileUtility.h"
 #include "Code/Utility/Serialize.h"
 #include "Code/Utility/StopWatch.h"
-#include "Code/Utility/Window.h"
-#include "Code\Core\Engine.h"
+
 using namespace TS;
+
+//-----------------------------------------------------------------
+//! ロガーテスト
+//-----------------------------------------------------------------
 
 //! ログのエラーレベルによって色を付けてみるテストクラス
 class ColorLogger : public Logger
@@ -43,7 +46,31 @@ public:
 
 };
 
+void UserLoggerTest()
+{
+    TS_LOG("◇ユーザ定義のロガーの動作確認テスト\n\n");
+    SharedPtr<Logger> logger = TS_NEW(ColorLogger)();
 
+    TS_LOG("ユーザ定義のロガー未使用--\n");
+    SetUserLogger(nullptr);
+    TS_LOG("通常ログ\n");
+    TS_LOG_ERROR("エラーログ\n");
+    TS_LOG_WARNING("警告ログ\n");
+    TS_LOG_DEBUG("デバッグログ\n");
+
+    SetUserLogger(logger);
+    TS_LOG("--ユーザロガーの使用を開始--\n");
+    TS_LOG("通常ログ\n");
+    TS_LOG_ERROR("エラーログ\n");
+    TS_LOG_WARNING("警告ログ\n");
+    TS_LOG_DEBUG("デバッグログ\n");
+
+    TS_LOG("\n----------------------------------- \n");
+}
+
+//-----------------------------------------------------------------
+//! シリアライズテスト
+//-----------------------------------------------------------------
 struct Pokemon
 {
 	TS::TsString name;
@@ -66,7 +93,6 @@ void SerializeTest()
 	pokemon2.name = "HITOKAGE";
 	pokemon2.hp = 10;
 
-	if (1)
 	{
 		std::ofstream ofs("pokemon.xml");
 		cereal::XMLOutputArchive o_archive(ofs);
@@ -82,7 +108,6 @@ void SerializeTest()
 		o_archive(bools);
 	}
 
-	if (1)
 	{
 		std::ifstream ifs("pokemon.xml");
 		cereal::XMLInputArchive i_archive(ifs);
@@ -99,28 +124,10 @@ void SerializeTest()
 
 }
 
-void UserLoggerTest()
-{
-	TS_LOG("◇ユーザ定義のロガーの動作確認テスト\n\n");
-	SharedPtr<Logger> logger = TS_NEW(ColorLogger)();
 
-	TS_LOG("ユーザ定義のロガー未使用--\n");
-	SetUserLogger(nullptr);
-	TS_LOG("通常ログ\n");
-	TS_LOG_ERROR("エラーログ\n");
-	TS_LOG_WARNING("警告ログ\n");
-	TS_LOG_DEBUG("デバッグログ\n");
-
-	SetUserLogger(logger);
-	TS_LOG("--ユーザロガーの使用を開始--\n");
-	TS_LOG("通常ログ\n");
-	TS_LOG_ERROR("エラーログ\n");
-	TS_LOG_WARNING("警告ログ\n");
-	TS_LOG_DEBUG("デバッグログ\n");
-
-	TS_LOG("\n----------------------------------- \n");
-}
-
+//-----------------------------------------------------------------
+//! メモリプールテスト
+//-----------------------------------------------------------------
 void StaticMemoryPoolTest()
 {
 	TS_LOG("◇メモリプールからメモリを確保するテスト \n\n");
@@ -146,6 +153,9 @@ void StaticMemoryPoolTest()
 	TS_LOG("\n----------------------------------- \n");
 }
 
+//-----------------------------------------------------------------
+//! アロケーションテスト
+//-----------------------------------------------------------------
 void CustomAllocatorTest()
 {
 	TS_LOG("◇メモリアロケーションテスト \n\n");
@@ -173,6 +183,9 @@ void CustomAllocatorTest()
 
 }
 
+//-----------------------------------------------------------------
+//! スマートポインタテスト
+//-----------------------------------------------------------------
 void SmartPointerTest()
 {
 	TS_LOG("◇スマートポインタ動作確認テスト \n\n");
@@ -187,6 +200,9 @@ void SmartPointerTest()
 	TS_LOG("\n----------------------------------- \n");
 }
 
+//-----------------------------------------------------------------
+//! ファイル作成テスト
+//-----------------------------------------------------------------
 void FilePathTest()
 {
 
@@ -210,6 +226,9 @@ void FilePathTest()
 	TS_LOG("\n----------------------------------- \n");
 }
 
+//-----------------------------------------------------------------
+//! テストを走らせる
+//-----------------------------------------------------------------
 void RunTests()
 {
 	GetMemorySystem().EnableMemoryLeakCheck();

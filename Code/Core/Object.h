@@ -12,7 +12,7 @@ namespace TS
          * \brief クラスの名前を取得します
          * \return クラスの名前
          */
-        const char*  GetClassName() const;
+        const char*  GetTypeName() const;
 
         /**
          * \brief このクラスを文字列に変換します

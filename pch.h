@@ -32,6 +32,8 @@
 
 //! TsFramework
 #include "Code/Core/ForwardDefinition.h"
+#include "Code/Utility/Serialize.h"
+#include "Code/Utility/StringUtility.h"
 #include "Code/Core/Develop.h"
 #include "Code/Core/Time.h"
 #include "Code/Core/Memory/MemorySystem.h"
@@ -42,3 +44,4 @@
 #include "Code/Gfx/IGfxResource.h"
 
 #include "Code/Gfx/GfxDevice.h"
+#include "Code/Gfx/GfxCore.h"
