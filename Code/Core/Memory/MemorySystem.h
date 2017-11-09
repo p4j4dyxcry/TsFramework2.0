@@ -4,20 +4,26 @@
 
 namespace TS
 {
+	/**
+	* \brief メモリを確保したときのヘッダデータ
+	*/
+	struct MemoryMetaData : public Object
+	{
+		size_t      objectSize;     //! 確保したオブジェクトの1つあたりサイズ
+		unsigned    arrayCount;     //! 確保したオブジェクトの数
 
-    /**
-    * \brief メモリ確保情報のメタデータを定義します
-    */
-    struct MemoryMetaData : Object
-    {
-        int         line;           //! ソースコード内での行番号
-        const char* fileName;       //! ソースコードのファイル名
-        const char* functionName;   //! 関数名
-        const char* typeData;       //! タイプ情報
-        size_t      memorySize;     //! メモリ量
-        void *      pointer;        //! ポインタ
-        IAllocator* pAllocator;     //! アロケータ
-    };
+		MemoryMetaData * pPrevBlock;
+		MemoryMetaData * pNextBlock;
+
+		int         line;           //! ソースコード内での行番号
+		const char* fileName;       //! ソースコードのファイル名
+		const char* functionName;   //! 関数名
+		const char* typeData;       //! タイプ情報
+
+		void*		pointer;		//! 先頭ポインタ情報
+		IAllocator* pAllocator;		//! アロケータ情報
+
+	};
 
     class MemorySystem : Object
     {
@@ -81,7 +87,7 @@ namespace TS
          * \brief メモリを確保した際の情報を登録する
          * \param metadata 
          */
-        void RegisterMemoryMetaData(MemoryMetaData metadata);
+        void RegisterMemoryMetaData(MemoryMetaData* metadata);
 
 
 
@@ -89,7 +95,7 @@ namespace TS
          * \brief メモリを開放する際に登録したメタデータを削除する
          * \param pointer 
          */
-        void RemoveMemoryMetaData(void * pointer);
+        void RemoveMemoryMetaData(MemoryMetaData * metadata);
 
         /**
          * \brief メモリリーク情報をロガーに出力する
@@ -101,6 +107,8 @@ namespace TS
          */
         void DumpInfo();
 
+		int GetAllocMemoryCount()const;
+
     protected:
         /**
          * \brief アロケータを追加する
@@ -111,10 +119,10 @@ namespace TS
     private:
         bool m_isLeakChek;
         std::vector<IAllocator*> m_Allocators;
-        std::unordered_map<void*, MemoryMetaData> m_MetaDatas;
-        IAllocator* m_pDefaultAllocator;
+        MemoryMetaData* m_pHeadMetaData;
+		MemoryMetaData* m_pCurrentMetaData;
+		IAllocator* m_pDefaultAllocator;
         IAllocator* m_pUserAllocator;
-
     };
 
     /**

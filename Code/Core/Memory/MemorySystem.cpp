@@ -100,7 +100,9 @@ namespace TS
     MemorySystem::MemorySystem() :
         m_isLeakChek(false), 
         m_pDefaultAllocator(nullptr), 
-        m_pUserAllocator(nullptr)
+        m_pUserAllocator(nullptr),
+		m_pHeadMetaData(nullptr),
+		m_pCurrentMetaData(nullptr)
     {
     }
 
@@ -154,58 +156,93 @@ namespace TS
         return m_pDefaultAllocator;
     }
 
-    void MemorySystem::RegisterMemoryMetaData(MemoryMetaData metadata)
+    void MemorySystem::RegisterMemoryMetaData(MemoryMetaData* pMetaData)
     {
-        m_MetaDatas[metadata.pointer] = metadata;
+		if (m_pHeadMetaData == nullptr)
+		{
+			m_pHeadMetaData = pMetaData;
+		}
+
+		if (m_pCurrentMetaData != nullptr)
+		{
+			m_pCurrentMetaData->pNextBlock = pMetaData;
+			pMetaData->pPrevBlock = m_pCurrentMetaData;
+		}
+		
+		m_pCurrentMetaData = pMetaData;
+		m_pCurrentMetaData->pNextBlock = nullptr;
     }
 
-    void MemorySystem::RemoveMemoryMetaData(void* pointer)
+    void MemorySystem::RemoveMemoryMetaData(MemoryMetaData* pMetaData)
     {
-        const bool exists = m_MetaDatas.find(pointer) != m_MetaDatas.end();
+		if (pMetaData->pPrevBlock != nullptr)
+			pMetaData->pPrevBlock->pNextBlock = pMetaData->pNextBlock;
+		else
+			m_pHeadMetaData = pMetaData->pNextBlock;
 
-        if(exists)
-            m_MetaDatas.erase(pointer);
+		if (pMetaData->pNextBlock != nullptr)
+			pMetaData->pNextBlock->pPrevBlock = pMetaData->pPrevBlock;
+		else
+			m_pCurrentMetaData = pMetaData->pPrevBlock;
     }
+
+	int MemorySystem::GetAllocMemoryCount()const
+	{
+		int count = 0;
+
+		for (auto p = m_pHeadMetaData;
+			p != nullptr;
+			p = p->pNextBlock, count++)
+		{
+		}
+		return count;
+	}
 
     void MemorySystem::DumpLeak()
     {
-        if (m_MetaDatas.size() > 0)
+        if (m_pCurrentMetaData == nullptr)
         {
-            TS_LOG_WARNING("%d個のメモリリークを検知しました。\n", m_MetaDatas.size());
+			TS_LOG("メモリリークはありません。");
+			return;
         }
-        else
+
+
+		TS_LOG_WARNING("%d個のメモリリークを検知しました。\n", GetAllocMemoryCount());
+		int count = 0;
+		for (auto p = m_pHeadMetaData;
+			p != nullptr;
+			p = p->pNextBlock)
         {
-            TS_LOG("メモリリークはありません。");
-        }
-        int id = 0;
-        for (auto it = m_MetaDatas.begin(); it != m_MetaDatas.end(); ++it)
-        {
-            ++id;
+            ++count;
             std::ostringstream ss;
-            ss << "【" << id << "】" << std::endl
-                << "\t" << "ファイル " << it->second.fileName << std::endl
-                << "\t" << "行　　　 " << it->second.line << std::endl
-                << "\t" << "型　　　 " << it->second.typeData << std::endl;
+            ss << "【" << count << "】" << std::endl
+                << "\t" << "ファイル " << p->fileName << std::endl
+                << "\t" << "行　　　 " << p->line	     << std::endl
+                << "\t" << "型　　　 " << p->typeData << std::endl;
             TS_LOG(ss.str().c_str());
         }
     }
 
     void MemorySystem::DumpInfo()
     {
-        if (m_MetaDatas.size() > 0)
+        if (GetAllocMemoryCount() > 0)
         {
-            TS_LOG("%d個のメモリを確保中\n", m_MetaDatas.size());
+            TS_LOG("%d個のメモリを確保中\n", GetAllocMemoryCount());
         }
         int id = 0;
-        for (auto it = m_MetaDatas.begin(); it != m_MetaDatas.end(); ++it)
-        {
-            ++id;
-            std::ostringstream ss;
-            ss << "【 " << id << " 】" << std::endl
-                << "\t" << "ファイル " << it->second.fileName << std::endl
-                << "\t" << "行　　　 " << it->second.line << std::endl;
-            TS_LOG(ss.str().c_str());
-        }
+		int count = 0;
+		for (auto p = m_pHeadMetaData;
+			p != nullptr;
+			p = p->pNextBlock)
+		{
+			++count;
+			std::ostringstream ss;
+			ss << "【" << count << "】" << std::endl
+				<< "\t" << "ファイル " << p->fileName << std::endl
+				<< "\t" << "行　　　 " << p->line << std::endl
+				<< "\t" << "型　　　 " << p->typeData << std::endl;
+			TS_LOG(ss.str().c_str());
+		}
     }
 }
 

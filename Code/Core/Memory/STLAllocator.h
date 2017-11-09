@@ -27,31 +27,31 @@ namespace TS
 
             IAllocator* pAllocator = memorySystem.GetSystemDefaultAllocator();
 
-            const size_t memorySize = sizeof(T) + sizeof(AllockHeaderBlock);
+            const size_t memorySize = sizeof(T) + sizeof(MemoryMetaData);
 
             auto pMemory = static_cast<char*>(pAllocator->Alloc(memorySize));
 
-            AllockHeaderBlock* block = new(pMemory)AllockHeaderBlock;
+			MemoryMetaData* block = new(pMemory)MemoryMetaData;
 
             block->objectSize = sizeof(T);
             block->arrayCount = 1;
+			block->pPrevBlock = nullptr;
+			block->pNextBlock = nullptr;
 
-            pMemory += sizeof(AllockHeaderBlock);
+            pMemory += sizeof(MemoryMetaData);
             T* pObject = reinterpret_cast<T*>(pMemory);
 
 
             if (memorySystem.IsEnableMemoryLeak())
             {
-                MemoryMetaData memory_meta;
-                memory_meta.line = 0;
-                memory_meta.fileName = "該当なし";
-                memory_meta.functionName = "STLのコンテナから確保されました。";
+                block->line = 0;
+                block->fileName = "該当なし";
+                block->functionName = "STLのコンテナから確保されました。";
+                block->pAllocator = pAllocator;
 
-                memory_meta.pAllocator = pAllocator;
-                memory_meta.memorySize = memorySize;
-                memory_meta.pointer = pObject;
-                memory_meta.typeData = typeid(T).name();
-                memorySystem.RegisterMemoryMetaData(memory_meta);
+				block->pointer = pObject;
+                block->typeData = typeid(T).name();
+                memorySystem.RegisterMemoryMetaData(block);
             }
             return pObject;
         }
@@ -61,12 +61,12 @@ namespace TS
             auto& memorySystem = GetMemorySystem();
 
             IAllocator* pAllocator = memorySystem.FindAllocator(p);
-            AllockHeaderBlock* meta = reinterpret_cast<AllockHeaderBlock*>(p);
+			MemoryMetaData* meta = reinterpret_cast<MemoryMetaData*>(p);
             meta--;
             void * pMemoryHead = meta;
 
             if (memorySystem.IsEnableMemoryLeak())
-                memorySystem.RemoveMemoryMetaData(p);
+                memorySystem.RemoveMemoryMetaData(meta);
 
             pAllocator->Free(pMemoryHead);
         }

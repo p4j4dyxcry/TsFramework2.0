@@ -19,14 +19,7 @@
 
 namespace TS
 {
-    /**
-     * \brief メモリを確保したときのヘッダデータ
-     */
-    struct AllockHeaderBlock : public Object
-    {
-        size_t      objectSize;     //! 確保したオブジェクトの1つあたりサイズ
-        unsigned    arrayCount;     //! 確保したオブジェクトの数
-    };
+
 
     /**
     * \brief メタ情報を埋め込みつつ可変長コンストラクタを呼ぶ仕組み
@@ -34,15 +27,22 @@ namespace TS
     template<typename TypeX>
     struct CallConstructor
     {
+		struct MethodMetaData
+		{
+			int line;
+			const char* filename;
+			const char* function;
+		};
+
         //メタ情報の埋め込み
-        MemoryMetaData memory_meta;
+		MethodMetaData metaData;
         CallConstructor(const int line,
             const char* filename,
             const char* functionname)
         {
-            memory_meta.line = line;
-            memory_meta.fileName = filename;
-            memory_meta.functionName = functionname;
+			metaData.line = line;
+			metaData.filename = filename;
+			metaData.function = functionname;
         }
 
         //! 対象のメモリを確保しコンストラクタを呼び出す
@@ -58,26 +58,27 @@ namespace TS
 
             IAllocator* pAllocator = memorySystem.GetSystemDefaultAllocator();
 
-            const size_t memorySize = sizeof(TypeX) + sizeof(AllockHeaderBlock);
+            const size_t memorySize = sizeof(TypeX) + sizeof(MemoryMetaData);
 
             auto pMemory = static_cast<char*>(pAllocator->Alloc(memorySize));
-            AllockHeaderBlock* block = new(pMemory)AllockHeaderBlock;
+			MemoryMetaData* block = new(pMemory)MemoryMetaData;
 
             block->objectSize = sizeof(TypeX);
             block->arrayCount = 1;
-
-            pMemory += sizeof(AllockHeaderBlock);
+			block->fileName = metaData.filename;
+			block->line = metaData.line;
+			block->functionName = metaData.function;
+            pMemory += sizeof(MemoryMetaData);
             TypeX* pObject = new (pMemory)TypeX(std::forward<Params>(params)...);
 
 
             if (memorySystem.IsEnableMemoryLeak())
             {
-                memory_meta.pAllocator = pAllocator;
-                memory_meta.memorySize = memorySize;
-                memory_meta.pointer = pObject;
-                memory_meta.typeData = typeid(TypeX).name();
-                memorySystem.RegisterMemoryMetaData(memory_meta);
+                block->pAllocator = pAllocator;
 
+                block->pointer = pObject;
+                block->typeData = typeid(TypeX).name();
+                memorySystem.RegisterMemoryMetaData(block);
             }
             return pObject;
         }
@@ -96,7 +97,7 @@ namespace TS
 
         IAllocator* pAllocator = memorySystem.FindAllocator(ptr);
 
-        AllockHeaderBlock* meta = reinterpret_cast<AllockHeaderBlock*>(ptr);
+		MemoryMetaData* meta = reinterpret_cast<MemoryMetaData*>(ptr);
         meta--;
         void * pMemoryHead = meta;
 
@@ -108,7 +109,7 @@ namespace TS
         }
 
         if (memorySystem.IsEnableMemoryLeak())
-            memorySystem.RemoveMemoryMetaData(ptr);
+            memorySystem.RemoveMemoryMetaData(meta);
 
         pAllocator->Free(pMemoryHead);
         ptr = nullptr;
@@ -128,16 +129,16 @@ namespace TS
 
         IAllocator* pAllocator = GetMemorySystem().GetSystemDefaultAllocator();
 
-        const size_t memorySize = sizeof(TypeX) * itemCount + sizeof(AllockHeaderBlock);
+        const size_t memorySize = sizeof(TypeX) * itemCount + sizeof(MemoryMetaData);
 
         auto pMemory = static_cast<char*>(pAllocator->Alloc(memorySize));
 
-        AllockHeaderBlock* block = new(pMemory)AllockHeaderBlock;
+		MemoryMetaData* block = new(pMemory)MemoryMetaData;
 
         block->objectSize = sizeof(TypeX);
         block->arrayCount = itemCount;
 
-        pMemory += sizeof(AllockHeaderBlock);
+		pMemory += sizeof(MemoryMetaData);
 
         TypeX* pCurrent = reinterpret_cast<TypeX*>(pMemory);
 
@@ -150,17 +151,14 @@ namespace TS
         // ! メタ情報を埋め込んでおく
         if (memorySystem.IsEnableMemoryLeak())
         {
-            MemoryMetaData memory_meta;
+            block->line = line;
+            block->fileName = filename;
+            block->functionName = functionname;
+            block->pAllocator = pAllocator;
 
-            memory_meta.line = line;
-            memory_meta.fileName = filename;
-            memory_meta.functionName = functionname;
-
-            memory_meta.pAllocator = pAllocator;
-            memory_meta.memorySize = memorySize;
-            memory_meta.pointer = pMemory;
-            memory_meta.typeData = typeid(TypeX).name();
-            memorySystem.RegisterMemoryMetaData(memory_meta);
+            block->pointer = pMemory;
+            block->typeData = typeid(TypeX).name();
+            memorySystem.RegisterMemoryMetaData(block);
         }
         return reinterpret_cast<TypeX*>(pMemory);
     }
