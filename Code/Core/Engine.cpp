@@ -51,16 +51,9 @@ namespace TS
         return true;
     }
 
-    void Engine::Destroy()
+    void Engine::Finalize()
     {
-        m_pMainWindow.Release();
-        m_pUserLogger.Release();
-        if (m_pMemorySystem != nullptr)
-        {
-            m_pMemorySystem->DumpLeak();
-            delete m_pMemorySystem;
-            m_pMemorySystem = nullptr;
-        }
+
     }
 
     Engine* Engine::Instance()
@@ -75,7 +68,7 @@ namespace TS
 			g_isCreated = true;
 			g_engine = new Engine();
             g_engine->Initialize(option);			
-;		}        
+		}        
 		return Instance();
 	}
 
@@ -87,12 +80,15 @@ namespace TS
     void Engine::Destory()
     {
 		auto engine = Instance();
-
+		auto memorySystem = &(engine->GetMemorySystem());
 		if (engine == nullptr)
 			return;
-
+		engine->Finalize();
 		delete g_engine;
-		g_engine = nullptr;
+		
+		//! メモリは全ての削除が終わってから削除する。
+		delete memorySystem;
+		memorySystem = nullptr;
     }
 
     void Engine::SetLogger(const SharedPtr<Logger>& logger)

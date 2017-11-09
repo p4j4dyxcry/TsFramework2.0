@@ -63,7 +63,7 @@ namespace TS
 
         bool Initialize(EngineSetting& option);
 
-        void Destroy();
+        void Finalize();
 
 	public:
 

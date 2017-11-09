@@ -47,6 +47,16 @@ namespace TS
 	     * \return いないならtrue
 	     */
 	    bool Invalid() const;
+
+		int GetRefCount()const
+		{
+			return m_referenceCount;
+		}
+
+		int GetObserverCount()const
+		{
+			return m_observerCount;
+		}
 	};
 
     /**
@@ -297,6 +307,7 @@ namespace TS
                 return;
 
             m_pRefCounter->SubRef();
+
             if (m_pRefCounter->IsRefZero())
             {
                 DeletePointer();
