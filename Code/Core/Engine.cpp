@@ -88,7 +88,6 @@ namespace TS
 		
 		//! メモリは全ての削除が終わってから削除する。
 		delete memorySystem;
-		memorySystem = nullptr;
     }
 
     void Engine::SetLogger(const SharedPtr<Logger>& logger)

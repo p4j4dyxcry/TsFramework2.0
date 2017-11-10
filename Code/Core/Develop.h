@@ -96,6 +96,7 @@
     }\
 }
 
+//! 現在時刻を出力する
 #define TS_DUMP_CURRENT_TIME(action) \
 {\
     time_t t = time(nullptr);\
