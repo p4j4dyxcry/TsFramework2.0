@@ -88,6 +88,16 @@ namespace TS
          */
         bool From(void* pointer) const;
 
+        /**
+         * \brief スレッドセーフモードを指定する
+         * \param enable 
+         */
+        void SetThreadSafeFlag( const bool enable )
+        {
+            TS_LOCK(Mutex());
+            m_isThreadSafe = enable;
+        }
+
         const char* ToString() const override;
 
         //! コピーコンストラクタとムーブコンストラクタを無効化する
@@ -115,5 +125,6 @@ namespace TS
         unsigned char* m_pMemory;       //! メモリプール
         Chunk*         m_pCurrentChunk; //! 現在のチャンク
         Chunk *        m_pChunkList;    //! チャンクの一覧
+        bool           m_isThreadSafe;  //! スレッドセーフフラグ
     };
 }

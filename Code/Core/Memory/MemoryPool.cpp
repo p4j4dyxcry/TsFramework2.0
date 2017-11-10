@@ -8,8 +8,8 @@ namespace TS
          m_pMemory(nullptr),
          m_pCurrentChunk(nullptr),
          m_pChunkList(nullptr),
-         m_MemorySize(chunkSize * chunkCount)
-
+         m_MemorySize(chunkSize * chunkCount),
+        m_isThreadSafe(false)
     {
         m_pMemory = new unsigned char[GetMemorySize()];
         m_pChunkList = new Chunk[GetChunkCount()];
@@ -49,7 +49,8 @@ namespace TS
 
     void* StaticMemoryPool::Alloc(const size_t memorySize)
     {
-		TS_LOCK(Mutex());
+        if (m_isThreadSafe)
+            TS_LOCK(Mutex());
 
         //! 要求されたメモリに対する必要なチャンクを計算する
         const unsigned requiredChunk = (memorySize / ( GetChunkSize() + 1)) + 1;
@@ -71,7 +72,8 @@ namespace TS
 
     bool StaticMemoryPool::Free(void* pointer)
     {
-		TS_LOCK(Mutex());
+        if(m_isThreadSafe)
+    		TS_LOCK(Mutex());
 
         if (From(pointer) == false)
             return false;
@@ -144,6 +146,12 @@ namespace TS
         const int id = static_cast<char*>(pointer) - reinterpret_cast<char*>(m_pMemory);
 
         return id >= 0 && static_cast<unsigned>(id) < GetMemorySize();
+    }
+
+    void StaticMemoryPool::SetThreadSafeFlag(const bool enable)
+    {
+        TS_LOCK(Mutex());
+        m_isThreadSafe = enable;
     }
 
     bool StaticMemoryPool::SeekEmptyChunk(const unsigned continuous)
