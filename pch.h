@@ -40,7 +40,7 @@
 #include "Code/Core/Memory/Pointer.h"
 
 //! Gfx
-#include "Code/Gfx/DxPointer.h"
+#include "Code/Gfx/GfxCommon.h"
 #include "Code/Gfx/IGfxResource.h"
 
 #include "Code/Gfx/GfxDevice.h"

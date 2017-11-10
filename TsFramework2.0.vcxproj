@@ -122,7 +122,7 @@
     <ClInclude Include="Code\Core\Time.h" />
     <ClInclude Include="Code\Core\TimeSystem.h" />
     <ClInclude Include="Code\Core\Types.h" />
-    <ClInclude Include="Code\Gfx\DxPointer.h" />
+    <ClInclude Include="Code\Gfx\GfxCommon.h" />
     <ClInclude Include="Code\Gfx\GfxCore.h" />
     <ClInclude Include="Code\Gfx\GfxDevice.h" />
     <ClInclude Include="Code\Gfx\GfxDeviceContext.h" />
