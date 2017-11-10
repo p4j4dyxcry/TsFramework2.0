@@ -9,7 +9,10 @@ namespace TS
         static const int NumRenderTargetSlot = 8;
 
     public:
-        
+        /**
+         * \brief コンストラクタ
+         */
+        GfxDeviceContext();
         /**
          * \brief レンダーターゲットを設定する
          * \param renderTarget 設定するレンダーターゲット
@@ -46,10 +49,17 @@ namespace TS
         bool Initialize(SharedPtr<ID3D11DeviceContext> pDeviceContext,
                         WeakPtr<ID3D11Device> pDevice,
                         WeakPtr<IDXGISwapChain> pSwapChain);
+
+        /**
+         * \brief トポロジを設定する
+         * \param topology 
+         */
+        void SetTopology(Topology topology);
     private:
         SharedPtr<ID3D11DeviceContext> m_pDeviceContext;
         SharedPtr<GfxRenderTarget>     m_pMainRenderTarget;
         SharedPtr<GfxRenderTarget>     m_renderTargets[NumRenderTargetSlot];
+        Topology                       m_topology;
 
     };
 
