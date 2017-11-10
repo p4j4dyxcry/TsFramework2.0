@@ -57,6 +57,7 @@ namespace TS
     void GfxDeviceContext::SetTopology(const Topology topology)
     {
         m_topology = topology;
+        m_pDeviceContext->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(topology));
     }
 }
 
