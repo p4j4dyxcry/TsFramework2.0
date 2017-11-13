@@ -92,11 +92,7 @@ namespace TS
          * \brief スレッドセーフモードを指定する
          * \param enable 
          */
-        void SetThreadSafeFlag( const bool enable )
-        {
-            TS_LOCK(Mutex());
-            m_isThreadSafe = enable;
-        }
+        void SetThreadSafeFlag(const bool enable);
 
         const char* ToString() const override;
 
