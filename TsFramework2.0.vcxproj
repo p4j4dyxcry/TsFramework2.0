@@ -134,6 +134,7 @@
     <ClInclude Include="Code\Gfx\IGfxTexture.h" />
     <ClInclude Include="Code\Utility\FileUtility.h" />
     <ClInclude Include="Code\Utility\DoubleOutStream.h" />
+    <ClInclude Include="Code\Utility\Random.h" />
     <ClInclude Include="Code\Utility\Serialize.h" />
     <ClInclude Include="Code\Utility\Serialize\Array.hpp" />
     <ClInclude Include="Code\Utility\StopWatch.h" />
@@ -161,6 +162,7 @@
     <ClCompile Include="Code\Gfx\IGfxShaderResource.cpp" />
     <ClCompile Include="Code\Gfx\IGfxTexture.cpp" />
     <ClCompile Include="Code\Utility\FileUtility.cpp" />
+    <ClCompile Include="Code\Utility\Random.cpp" />
     <ClCompile Include="Code\Utility\StopWatch.cpp" />
     <ClCompile Include="Code\Utility\Window.cpp" />
     <ClCompile Include="pch.cpp">

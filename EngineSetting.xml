@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TsFramework>
+	<EngineSetting>
+		<Window>
+			<Title>TsFramework</Title>
+			<Width>1280</Width>
+			<Height>768</Height>
+		</Window>
+		<Time>
+			<Framerate>60</Framerate>
+		</Time>
+	</EngineSetting>
+</TsFramework>
+

@@ -24,6 +24,10 @@
 #define TS_DEPRECATED __declspec(deprecated("非推奨な項目を利用しています。この機能は廃止予定です。"))
 #define TS_DEPRECATED_MESSAGE (message) __declspec(deprecated(message))
 
+//! UINT最大値をfloat表現
+#define TS_UINT_MAX_TO_FLT ( 4294967295.0f )
+
+#define TS_UINT_MAX_TO_DBL ( 4294967295.0  )
 
 //!  現在の関数の名前
 #define TS_FUNCTION __FUNCTION__

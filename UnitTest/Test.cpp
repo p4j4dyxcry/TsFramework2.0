@@ -46,9 +46,22 @@ public:
 
 };
 
+const char* g_test_name;
+void BeginTest(const char* testname)
+{
+    g_test_name = testname;
+    TS_LOG_ERROR("◇:%sテスト\n\n",g_test_name);
+}
+
+void EndTest()
+{
+    TS_LOG_ERROR("---%sテスト終了\n", g_test_name);
+}
+
+
 void UserLoggerTest()
 {
-    TS_LOG("◇ユーザ定義のロガーの動作確認テスト\n\n");
+    BeginTest("ユーザロガー");
     SharedPtr<Logger> logger = TS_NEW(ColorLogger)();
 
     TS_LOG("ユーザ定義のロガー未使用--\n");
@@ -65,7 +78,7 @@ void UserLoggerTest()
     TS_LOG_WARNING("警告ログ\n");
     TS_LOG_DEBUG("デバッグログ\n");
 
-    TS_LOG("\n----------------------------------- \n");
+    EndTest();
 }
 
 //-----------------------------------------------------------------
@@ -85,6 +98,7 @@ struct Pokemon
 };
 void SerializeTest()
 {
+    BeginTest("シリアライズ");
 	Pokemon pokemon;
 	pokemon.name = "PIKACHU";
 	pokemon.hp = 100;
@@ -121,7 +135,7 @@ void SerializeTest()
 		std::cout << pokemon_i.name << std::endl;
 		std::cout << pokemon_i.hp << std::endl;
 	}
-
+    EndTest();
 }
 
 
@@ -130,7 +144,7 @@ void SerializeTest()
 //-----------------------------------------------------------------
 void StaticMemoryPoolTest()
 {
-	TS_LOG("◇メモリプールからメモリを確保するテスト \n\n");
+    BeginTest("メモリプール");
 	StaticMemoryPool memory_pool(4096, 1024);
 
 	std::vector<void*> mem(1024);
@@ -150,7 +164,7 @@ void StaticMemoryPoolTest()
 		memory_pool.Free(e);
 	}
 	TS_LOG(memory_pool.ToString());
-	TS_LOG("\n----------------------------------- \n");
+    EndTest();
 }
 
 //-----------------------------------------------------------------
@@ -158,7 +172,7 @@ void StaticMemoryPoolTest()
 //-----------------------------------------------------------------
 void CustomAllocatorTest()
 {
-	TS_LOG("◇メモリアロケーションテスト \n\n");
+    BeginTest("メモリアロケーション");
 	TS_LOG("デフォルトアロケータ -> \n");
 
 	StopWatch stop_watch;
@@ -179,8 +193,8 @@ void CustomAllocatorTest()
 	}
 
 	TS_LOG("%4.6f(ミリ秒)\n", stop_watch.Elpased() * 1000.0);
-	TS_LOG("\n----------------------------------- \n");
 
+    EndTest();
 }
 
 //-----------------------------------------------------------------
@@ -188,7 +202,7 @@ void CustomAllocatorTest()
 //-----------------------------------------------------------------
 void SmartPointerTest()
 {
-	TS_LOG("◇スマートポインタ動作確認テスト \n\n");
+    BeginTest("スマートポインタ");
 	TS_LOG("メモリリークがなければ成功 \n");
 	SharedPtr<int> sPtr = SharedPtr<int>(TS_NEW(int)());
 	WeakPtr<int>   wPtr = sPtr;
@@ -197,7 +211,8 @@ void SmartPointerTest()
 	UniquePtr<int> uPtr = (TS_NEW(int)());
 	auto ptr = sPtr;
 	(*ptr) = 5;
-	TS_LOG("\n----------------------------------- \n");
+	
+    EndTest();
 }
 
 //-----------------------------------------------------------------
@@ -205,8 +220,7 @@ void SmartPointerTest()
 //-----------------------------------------------------------------
 void FilePathTest()
 {
-
-	TS_LOG("◇ファイルテスト \n\n");
+    BeginTest("ファイル");
 	{
 		char path[_MAX_PATH];
 		FileUtility::GetCD(path);
@@ -223,7 +237,67 @@ void FilePathTest()
 		TS_LOG("ディレクトリ削除 -> \n%s\n%s\n", dirName, FileUtility::Delete(dirName, true) ? "成功" : "失敗");
 		TS_LOG("ディレクトリ　　 -> \n%s\n%s\n", dirName, FileUtility::Exist(dirName) ? "存在" : "存在しない");
 	}
-	TS_LOG("\n----------------------------------- \n");
+    EndTest();
+}
+
+template <typename T>
+int RandomTestFunc(T _min , T _max )
+{
+
+    bool isFloat = typeid(T).name()[0] == 'f' || typeid(T).name()[0] == 'd';
+
+    const int numTest = 20000;
+    const int representative[] = { 0,1987,6921,10250,19873 };
+
+    T big = max(_min,_max);
+    T samll = min(_min, _max);
+
+    TS_LOG("--%s型\n",typeid(T).name());
+    if(isFloat)
+        TS_LOG("\t範囲 %.6f ～ %.6f \n", (_min), (_max))
+    else
+        TS_LOG("\t範囲 %d ～ %d \n", (_min), (_max))
+    for (int i = 0; i<numTest; ++i)
+    {
+        auto val = Random<T>::Global(_min, _max);
+        if (val < samll || val > big)
+        {
+            TS_LOG_ERROR("\t テスト失敗\n");
+            if (isFloat)
+                TS_LOG_ERROR("\t値 %.6f \n", (val))
+            else
+                TS_LOG_ERROR("\t値 %d \n", (val))
+            return -1;
+        }
+        for (int j = 0; j < _ARRAYSIZE(representative); ++j)
+            if (i == representative[j])
+                if(isFloat)
+                    TS_LOG("\t代表値[%d] %.6f \n", j,(val))
+                else
+                    TS_LOG("\t代表値[%d] %d \n", j, (val))
+    }
+    TS_LOG("\t テスト成功\n");
+    return 0;
+}
+
+void RandomTest()
+{
+    BeginTest("乱数");
+    {
+        RandomTestFunc<char>(-38, 62);
+        RandomTestFunc<unsigned char>(12, 126);
+
+        RandomTestFunc<short>(-31500, -3800);
+        RandomTestFunc<unsigned short>(65535, 0);
+
+        RandomTestFunc<int>(-90000, 1500000);
+        RandomTestFunc<unsigned int>(1, 5);
+
+        RandomTestFunc<float>(-0.1f, 0.0f);
+        RandomTestFunc<double>(-124.51f, -9999.52f);        
+    }
+    EndTest();
+    while (1);
 }
 
 //-----------------------------------------------------------------
@@ -234,7 +308,8 @@ void RunTests()
 	GetMemorySystem().EnableMemoryLeakCheck();
 	GetMemorySystem().GetSystemDefaultAllocator();
 
-	UserLoggerTest();
+	UserLoggerTest();    
+    RandomTest();
 	StaticMemoryPoolTest();
 	CustomAllocatorTest();
 	SmartPointerTest();

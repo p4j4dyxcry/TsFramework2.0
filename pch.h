@@ -23,6 +23,8 @@
 //! externals
 #include <Windows.h>
 
+#pragma comment(lib,"winmm.lib")
+
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #pragma comment(lib, "d3d11.lib")
@@ -38,6 +40,8 @@
 #include "Code/Core/Time.h"
 #include "Code/Core/Memory/MemorySystem.h"
 #include "Code/Core/Memory/Pointer.h"
+
+#include "Code/Utility/Random.h"
 
 //! Gfx
 #include "Code/Gfx/GfxCommon.h"
