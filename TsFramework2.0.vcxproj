@@ -127,7 +127,6 @@
     <ClInclude Include="Code\Gfx\GfxCore.h" />
     <ClInclude Include="Code\Gfx\GfxDevice.h" />
     <ClInclude Include="Code\Gfx\GfxDeviceContext.h" />
-    <ClInclude Include="Code\Gfx\GfxPipline.h" />
     <ClInclude Include="Code\Gfx\GfxRenderTarget.h" />
     <ClInclude Include="Code\Gfx\IGfxResource.h" />
     <ClInclude Include="Code\Gfx\IGfxShaderResource.h" />
@@ -156,7 +155,6 @@
     <ClCompile Include="Code\Gfx\GfxCore.cpp" />
     <ClCompile Include="Code\Gfx\GfxDevice.cpp" />
     <ClCompile Include="Code\Gfx\GfxDeviceContext.cpp" />
-    <ClCompile Include="Code\Gfx\GfxPipline.cpp" />
     <ClCompile Include="Code\Gfx\GfxRenderTarget.cpp" />
     <ClCompile Include="Code\Gfx\IGfxResource.cpp" />
     <ClCompile Include="Code\Gfx\IGfxShaderResource.cpp" />

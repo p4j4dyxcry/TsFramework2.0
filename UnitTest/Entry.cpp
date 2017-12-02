@@ -16,11 +16,8 @@ TS::EngineSetting LoadSetting(int argc, char *argv[])
     }
     else
     {
-        std::string a("ア");
         cereal::XMLInputArchive archive(ifs);
         archive(cereal::make_nvp("EngineSetting", option));
-
-        option.Window.Title = UTF8toSjis("アイウエオ");
     }
     return option;
 }
@@ -38,7 +35,7 @@ void TestRender(TS::SharedPtr<TS::GfxCore>& gfxSystem)
 
     if (i< 3)
     {
-        c[i] += TS::GetEngine()->GetTimeSystem()->GetDeltaTime() * 0.25f;
+        c[i] += (float)TS::GetEngine()->GetTimeSystem()->GetDeltaTime() * 0.25;
 
         if (c[i] > 1)
         {
