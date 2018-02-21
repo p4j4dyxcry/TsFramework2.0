@@ -114,6 +114,12 @@
     <ClInclude Include="Code\Utility\Random.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="Code\Gfx\GfxResourceService.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\Utility\Finder.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UnitTest\Entry.cpp">
@@ -183,6 +189,12 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Code\Utility\Random.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Gfx\GfxResourceService.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Utility\Finder.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

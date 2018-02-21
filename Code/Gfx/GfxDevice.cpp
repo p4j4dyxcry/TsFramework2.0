@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "GfxDevice.h"
 #include "Code/Utility/Window.h"
+#include "GfxResourceService.h"
 
 namespace TS
 {
@@ -87,7 +88,7 @@ namespace TS
         m_pDx11Device = CreateDxSharePtr(pDevice);
         m_pDxSwapChain = CreateDxSharePtr(pSwapChain);
 
-        m_pDxImmediateContext = Create<GfxDeviceContext>();
+        m_pDxImmediateContext = GfxResourceService::Instance()->Create<GfxDeviceContext>();
         m_pDxImmediateContext->Initialize(CreateDxSharePtr(pDeviceContext), m_pDx11Device, m_pDxSwapChain);
 
         return true;

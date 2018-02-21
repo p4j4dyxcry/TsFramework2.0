@@ -36,7 +36,6 @@ inline bool IsUtf8(const char *str, int length)
     return true;
 }
 
-
 inline std::string UTF8toSjis(std::string srcUTF8) 
 {
     if (IsUtf8(&srcUTF8[0], srcUTF8.size()) == false)
@@ -96,3 +95,43 @@ std::string SjistoUTF8(std::string srcSjis) {
     return strUTF8;
 }
 
+//todo リファクタ
+//! BM法による部分一致の高速検索
+inline int BMSearch(const char * source, const char* pattern)
+{
+    int srcLen = strlen(source);
+    int ptLen = strlen(pattern);
+
+    int skip[256];
+
+    // 文字パターンのスキップ表の作成
+    for (int i = 0; i < 256; ++i)
+        skip[i] = ptLen - 1;
+
+    for (int i = 0; i < ptLen; ++i)
+        skip[static_cast<int>(pattern[i])] = ptLen - i - 1;
+
+    int idx, j;
+    idx = j = ptLen - 1;
+
+    while (true)
+    {
+        if (idx >= srcLen)
+            break;
+        if (j < 0)
+            break;
+
+        if (source[idx] != pattern[j])
+        {
+            int step = min(skip[static_cast <int>(source[idx])], ptLen - 1);
+            idx += step;
+            j = ptLen - 1;
+        }
+        else
+        {
+            j--;
+            idx--;
+        }
+    }
+    return idx;
+}
