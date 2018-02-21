@@ -31,13 +31,13 @@ namespace TS
          * \param col 
          * \param renderTarget 
          */
-        void ClearColor(const float col[4], SharedPtr<GfxRenderTarget> renderTarget = nullptr);
+        void FillRenderTarget(const float col[4], SharedPtr<GfxRenderTarget> renderTarget = nullptr);
 
         /**
          * \brief 全てのレンダーターゲットスロットを指定色で塗りつぶす
          * \param col 
          */
-        void ClearColorByAllRenderTargetSlot(const float col[4]);
+        void FillRenderTargetsAll(const float col[4]);
 
         /**
          * \brief 初期化

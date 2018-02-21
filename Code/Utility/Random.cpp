@@ -82,8 +82,8 @@ namespace TS
 
     template <typename T>
     Random<T>::Random(const unsigned seed):
-        x(123456789u),
-        y(362436069u),
+        x(_lrotl(123456789u,13) ^ seed ),
+        y(_lrotl(362436069u,7)  ^ seed ),
         z(521288629u),
         w(seed)
     {

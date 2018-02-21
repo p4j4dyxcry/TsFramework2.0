@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "GfxDeviceContext.h"
+#include "GfxResourceService.h"
 
 namespace TS
 {
@@ -22,15 +23,15 @@ namespace TS
         m_renderTargets[id] = nullptr;
     }
 
-    void GfxDeviceContext::ClearColor(const float col[4], SharedPtr<GfxRenderTarget> renderTarget)
+    void GfxDeviceContext::FillRenderTarget(const float col[4], SharedPtr<GfxRenderTarget> renderTarget)
     {
         if (renderTarget != nullptr)
             m_pDeviceContext->ClearRenderTargetView(renderTarget->GetRenderTargetView().GetPointer(), col);
         else
-            ClearColorByAllRenderTargetSlot(col);
+            FillRenderTargetsAll(col);
     }
 
-    void GfxDeviceContext::ClearColorByAllRenderTargetSlot(const float col[4])
+    void GfxDeviceContext::FillRenderTargetsAll(const float col[4])
     {
         for (int i = 0; i < NumRenderTargetSlot; ++i)
         {
@@ -48,7 +49,7 @@ namespace TS
         TS_ASSERT(pDeviceContext.IsNull() || pDevice.IsNull() || pSwapChain.IsNull(), "引き数が不正\n");
 
         m_pDeviceContext = pDeviceContext;
-        m_pMainRenderTarget = Create<GfxRenderTarget>("MainRenderTarget");
+        m_pMainRenderTarget = GfxResourceService::Instance()->Create<GfxRenderTarget>("MainRenderTarget");
         m_pMainRenderTarget->Initialize(pDevice, pSwapChain);
         m_renderTargets[0] = m_pMainRenderTarget;
         return true;

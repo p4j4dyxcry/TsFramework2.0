@@ -128,11 +128,13 @@
     <ClInclude Include="Code\Gfx\GfxDevice.h" />
     <ClInclude Include="Code\Gfx\GfxDeviceContext.h" />
     <ClInclude Include="Code\Gfx\GfxRenderTarget.h" />
+    <ClInclude Include="Code\Gfx\GfxResourceService.h" />
     <ClInclude Include="Code\Gfx\IGfxResource.h" />
     <ClInclude Include="Code\Gfx\IGfxShaderResource.h" />
     <ClInclude Include="Code\Gfx\IGfxTexture.h" />
     <ClInclude Include="Code\Utility\FileUtility.h" />
     <ClInclude Include="Code\Utility\DoubleOutStream.h" />
+    <ClInclude Include="Code\Utility\Finder.h" />
     <ClInclude Include="Code\Utility\Random.h" />
     <ClInclude Include="Code\Utility\Serialize.h" />
     <ClInclude Include="Code\Utility\Serialize\Array.hpp" />
@@ -156,10 +158,12 @@
     <ClCompile Include="Code\Gfx\GfxDevice.cpp" />
     <ClCompile Include="Code\Gfx\GfxDeviceContext.cpp" />
     <ClCompile Include="Code\Gfx\GfxRenderTarget.cpp" />
+    <ClCompile Include="Code\Gfx\GfxResourceService.cpp" />
     <ClCompile Include="Code\Gfx\IGfxResource.cpp" />
     <ClCompile Include="Code\Gfx\IGfxShaderResource.cpp" />
     <ClCompile Include="Code\Gfx\IGfxTexture.cpp" />
     <ClCompile Include="Code\Utility\FileUtility.cpp" />
+    <ClCompile Include="Code\Utility\Finder.cpp" />
     <ClCompile Include="Code\Utility\Random.cpp" />
     <ClCompile Include="Code\Utility\StopWatch.cpp" />
     <ClCompile Include="Code\Utility\Window.cpp" />
