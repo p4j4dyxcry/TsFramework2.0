@@ -9,7 +9,7 @@
 */
 
 //! メモリ確保
-#define TS_NEW(...)                TS::CallConstructor<__VA_ARGS__>(TS_LINE,TS_FILENAME,TS_FUNCTION)
+#define TS_NEW(...)                TS::MetaDataIncludeConstructor<__VA_ARGS__>(TS_LINE,TS_FILENAME,TS_FUNCTION)
 
 //! 配列メモリの確保
 #define TS_NEWARRAY(type , count)   TS::AllocArray<type>(TS_LINE,TS_FILENAME,TS_FUNCTION,count)
@@ -19,15 +19,13 @@
 
 namespace TS
 {
-
-
     /**
     * \brief メタ情報を埋め込みつつ可変長コンストラクタを呼ぶ仕組み
     */
     template<typename TypeX>
-    struct CallConstructor
+    struct MetaDataIncludeConstructor
     {
-		struct MethodMetaData
+		struct FuncData
 		{
 			int line;
 			const char* filename;
@@ -35,8 +33,8 @@ namespace TS
 		};
 
         //メタ情報の埋め込み
-		MethodMetaData metaData;
-        CallConstructor(const int line,
+		FuncData metaData;
+        MetaDataIncludeConstructor(const int line,
             const char* filename,
             const char* functionname)
         {
@@ -84,6 +82,14 @@ namespace TS
         }
     };
 
+	/**
+	* \brief メモリのメタデータを取得します。
+	* \param ptr メモリを開放するポインタ
+	*/
+	inline MemoryMetaData& GetMemoryMetaDeta(void* pointer)
+	{
+		return *reinterpret_cast<MemoryMetaData*>( static_cast<char*>(pointer) - sizeof(MemoryMetaData));
+	}
 
     /**
     * \brief メモリを開放する
@@ -97,19 +103,19 @@ namespace TS
 
         IAllocator* pAllocator = memorySystem.FindAllocator(ptr);
 
-		MemoryMetaData* meta = reinterpret_cast<MemoryMetaData*>(ptr);
-        meta--;
-        void * pMemoryHead = meta;
+		MemoryMetaData& meta = GetMemoryMetaDeta(ptr);
+
+		void * pMemoryHead = &meta;
 
 
         TypeX* pCurrent = ptr;
-        for (unsigned i = 0; i<meta->arrayCount; ++i)
+        for (unsigned i = 0; i<meta.arrayCount; ++i)
         {
             pCurrent[i].~TypeX();
         }
 
         if (memorySystem.IsEnableMemoryLeak())
-            memorySystem.RemoveMemoryMetaData(meta);
+            memorySystem.RemoveMemoryMetaData(&meta);
 
         pAllocator->Free(pMemoryHead);
         ptr = nullptr;
