@@ -39,8 +39,8 @@ inline bool IsUtf8(const char *str, int length)
 
 inline std::string UTF8toSjis(std::string srcUTF8) 
 {
-    //if (IsUtf8(&srcUTF8[0], srcUTF8.size()) == false)
-    //    return srcUTF8;
+    if (IsUtf8(&srcUTF8[0], srcUTF8.size()) == false)
+        return srcUTF8;
 
     //Unicodeへ変換後の文字列長を得る
     int lenghtUnicode = MultiByteToWideChar(CP_UTF8, 0, srcUTF8.c_str(), srcUTF8.size() + 1, NULL, 0);

@@ -6,7 +6,7 @@ namespace TS
     class IGfxTexture : public IGfxShaderResource
     {
     public:
-        IGfxTexture();;
+        IGfxTexture();
         SharedPtr<ID3D11ShaderResourceView> GetShaderResourceView() const;
         bool UseAlpha()const;
         void SetAlphaEnable(bool flag);

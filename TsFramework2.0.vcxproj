@@ -119,7 +119,6 @@
     <ClInclude Include="Code\Core\Memory\STLAllocator.h" />
     <ClInclude Include="Code\Core\Object.h" />
     <ClInclude Include="Code\Core\Thread.h" />
-    <ClInclude Include="Code\Core\Time.h" />
     <ClInclude Include="Code\Core\TimeSystem.h" />
     <ClInclude Include="Code\Core\Types.h" />
     <ClInclude Include="Code\Game\Actor.h" />
