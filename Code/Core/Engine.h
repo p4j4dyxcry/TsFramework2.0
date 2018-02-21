@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Thread.h"
 #include "Code/Utility/Window.h"
-#include "Code/Utility/StopWatch.h"
 #include "TimeSystem.h"
 
 

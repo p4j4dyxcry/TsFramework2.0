@@ -3,6 +3,38 @@
 
 namespace TS
 {
+    struct IDeleter : Object
+    {
+        virtual void Delete() = 0;
+    };
+
+    template <typename P>
+    struct DefaultDeleter : IDeleter
+    {
+    public:
+        void Delete()override
+        {
+            TS_DELETE(m_pointer);
+        }
+        DefaultDeleter(P* p)
+            :m_pointer(p) {}
+        P* m_pointer;
+    };
+
+    template <typename P ,typename D>
+    struct CustomDeleter : IDeleter
+    {
+    public:
+        void Delete()override
+        {
+            m_deleter(m_pointer);
+        }
+        CustomDeleter(P* p, D t)
+            :m_pointer(p), m_deleter(t){}
+        D m_deleter;
+        P* m_pointer;
+    };
+
     /**
 	 * \brief 参照カウンタを定義するクラス
 	 */
@@ -66,9 +98,11 @@ namespace TS
 	template <typename T>
 	class IPointer : public Object
 	{		
+        friend class IPointer;
+
 	protected:
 		T* m_nativePointer;
-		std::function< void(T*) > m_deleter;
+        IDeleter* m_deleter;
 
 	protected:
 
@@ -77,8 +111,11 @@ namespace TS
 		 */
 		virtual void DeletePointer()
 		{
-		    if ( m_nativePointer != nullptr )
-                m_deleter(m_nativePointer);
+		    if ( m_nativePointer != nullptr && m_deleter)
+		    {
+                m_deleter->Delete();
+                TS_DELETE(m_deleter);
+		    }
 		}
 
 	public:
@@ -89,11 +126,13 @@ namespace TS
 		 */
 		IPointer(T* pointer):
 			m_nativePointer(pointer)
-			, m_deleter([](T* p) {TS_DELETE(p); p = nullptr; }) {}
+			, m_deleter(pointer ? TS_NEW(DefaultDeleter<T>)(pointer) : nullptr) {}
 
-		IPointer(T* pointer,const std::function<void(T*)>& deleter)
+        template<typename Deleter>
+		IPointer(T* pointer, Deleter& deleter)
 			:m_nativePointer(pointer)
-			,m_deleter(deleter){}
+			, m_deleter(TS_NEW(CustomDeleter<T, Deleter>)(pointer, deleter))
+		{}
 
 	    /**
          * \brief 生ポインタを取得する
@@ -140,7 +179,8 @@ namespace TS
         TS_DISABLE_MOVE(UniquePtr);
 	public:
 		UniquePtr(T* pointer): IPointer(pointer){}
-		UniquePtr(T* pointer, std::function<void(T*)>& deleter)
+        template<typename Deleter>
+		UniquePtr(T* pointer, Deleter& deleter)
 			: IPointer(pointer, deleter) {}
 
 	    /**
@@ -162,6 +202,7 @@ namespace TS
             m_deleter = from.m_deleter;
 
             from.m_nativePointer = nullptr;
+            const type_info& info = typeid(int);
 
             return *this;
 		}
@@ -174,6 +215,7 @@ namespace TS
 	template <typename T>
 	class IRefPtr : public  IPointer<T>
 	{
+        friend class IRefPtr;
 	protected:
 		ReferenceCounter* m_pRefCounter;
 	public:
@@ -189,9 +231,9 @@ namespace TS
 			: IPointer(pointer)
 			, m_pRefCounter(pRef){}
 
+        template<typename Deleter>
 		IRefPtr(T* pointer, 
-				ReferenceCounter * pRef ,
-				const std::function<void(T*)>& deleter)
+				ReferenceCounter * pRef ,Deleter& deleter)
 			: IPointer(pointer , deleter)
 			, m_pRefCounter(pRef){}
 
@@ -240,12 +282,17 @@ namespace TS
 		{
 			return m_pRefCounter->Invalid();
 		}
-		void CopyRefCounterFromArgument(const IRefPtr& ptr)
-		{
-			m_deleter = ptr.m_deleter;
-			m_pRefCounter = ptr.m_pRefCounter;
-		}
 
+        void CopyRefCounterFromArgument(const IRefPtr& ptr)
+        {
+            m_deleter = ptr.m_deleter;
+            m_pRefCounter = ptr.GetRefConter();
+        }
+
+        ReferenceCounter* GetRefConter()const
+		{
+            return m_pRefCounter;
+		}
 	};
 
     /**
@@ -259,6 +306,7 @@ namespace TS
 	template<typename T>
 	class SharedPtr : public IRefPtr<T>
 	{
+        friend class SharedPtr;
 	public:
 	    /**
 		 * \brief コンストラクタ
@@ -272,7 +320,8 @@ namespace TS
 			if(m_pRefCounter)
 				m_pRefCounter->AddRef();
 		}
-		SharedPtr(T* pointer, const std::function<void(T*)>& deleter)
+        template<typename Deleter>
+		SharedPtr(T* pointer, Deleter& deleter)
 			: IRefPtr(pointer 
 					  ,pointer != nullptr ? TS_NEW(ReferenceCounter)() : nullptr
 					  ,deleter)
@@ -280,12 +329,21 @@ namespace TS
 			if (m_pRefCounter)
 				m_pRefCounter->AddRef();
 		}
-		SharedPtr(const SharedPtr &rhs) : IRefPtr<T>(rhs.m_nativePointer)
+		SharedPtr(const SharedPtr<T> &rhs) : IRefPtr<T>(rhs.m_nativePointer)
 		{
 			CopyRefCounterFromArgument(rhs);
 			if (m_pRefCounter)
 				m_pRefCounter->AddRef();
 		}
+
+        template<class T_UpCastType> 
+	    SharedPtr(SharedPtr<T_UpCastType> &rhs): IRefPtr<T>(rhs.GetPointer())
+	    {
+            m_deleter = rhs.m_deleter;
+            m_pRefCounter = rhs.GetRefConter();
+	        if (m_pRefCounter)
+	            m_pRefCounter->AddRef();
+	    }
 
 	    /**
          * \brief デストラクタ
@@ -345,6 +403,7 @@ namespace TS
 	template<typename T>
 	class WeakPtr : public IRefPtr<T>
 	{
+        friend class WeakPtr;
 	private:
 
         /**
@@ -376,15 +435,22 @@ namespace TS
 		WeakPtr(const SharedPtr<T> &rhs) 
 			: IRefPtr<T>(rhs)
 		{
-			CopyRefCounterFromArgument(rhs);
+            m_pRefCounter = rhs.GetRefConter();
 			if(m_pRefCounter != nullptr)
 				m_pRefCounter->AddObserver();
 		}
+        template<typename T_UpCast>
+        WeakPtr(SharedPtr<T_UpCast> &rhs): IRefPtr<T>(rhs.GetPointer())
+        {
+            m_pRefCounter = rhs.GetRefConter();
+            if (m_pRefCounter != nullptr)
+                m_pRefCounter->AddObserver();
+        }
 
 		WeakPtr(const WeakPtr&rhs)
 			: IRefPtr<T>(rhs)
 		{
-			CopyRefCounterFromArgument(rhs);
+            m_pRefCounter = rhs.GetRefConter();
 			if (m_pRefCounter != nullptr)
 				m_pRefCounter->AddObserver();
 		}
@@ -421,7 +487,7 @@ namespace TS
 			CopyRefCounterFromArgument(rhs);
 			if (m_pRefCounter != nullptr)
 				m_pRefCounter->AddObserver();
-
+            std::get_deleter<void(*)(int)>(1);
 			return *this;
 		}
 	};

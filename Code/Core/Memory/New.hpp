@@ -9,7 +9,7 @@
 */
 
 //! メモリ確保
-#define TS_NEW(type)                TS::CallConstructor<type>(TS_LINE,TS_FILENAME,TS_FUNCTION)
+#define TS_NEW(...)                TS::CallConstructor<__VA_ARGS__>(TS_LINE,TS_FILENAME,TS_FUNCTION)
 
 //! 配列メモリの確保
 #define TS_NEWARRAY(type , count)   TS::AllocArray<type>(TS_LINE,TS_FILENAME,TS_FUNCTION,count)
