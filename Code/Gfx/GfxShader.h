@@ -2,10 +2,11 @@
 
 namespace TS
 {
-	class GfxShader : public Object
+	class GfxShader : public IGfxResource
 	{
-		public GfxShader();
+    public :
+	    GfxShader():IGfxResource(){}
 
+        bool LoadShaderFromFile();
 	};
 }
-

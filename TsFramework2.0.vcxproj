@@ -128,6 +128,7 @@
     <ClInclude Include="Code\Gfx\GfxDeviceContext.h" />
     <ClInclude Include="Code\Gfx\GfxRenderTarget.h" />
     <ClInclude Include="Code\Gfx\GfxResourceService.h" />
+    <ClInclude Include="Code\Gfx\GfxShader.h" />
     <ClInclude Include="Code\Gfx\IGfxResource.h" />
     <ClInclude Include="Code\Gfx\IGfxShaderResource.h" />
     <ClInclude Include="Code\Gfx\IGfxTexture.h" />
