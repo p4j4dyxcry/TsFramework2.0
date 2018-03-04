@@ -170,20 +170,21 @@ void StaticMemoryPoolTest()
 //-----------------------------------------------------------------
 //! アロケーションテスト
 //-----------------------------------------------------------------
-void CustomAllocatorTest()
+void AllocatorTest()
 {
-    BeginTest("メモリアロケーション");
-	TS_LOG("デフォルトアロケータ -> \n");
-
 	StopWatch stop_watch;
+
+    BeginTest("メモリアロケーション");
+
+	TS_LOG("デフォルトアロケータ -> \n");
 	stop_watch.Start();
 	for (int i = 0; i<50000; ++i)
 	{
 		int * ptr = new int(i);
-
 		delete ptr;
 	}
-	TS_LOG("%4.6f(ミリ秒)\n", stop_watch.Elpased()* 1000.0);
+	TS_LOG("%4.6f(ミリ秒)\n", stop_watch.Elpased() * 1000.0);
+
 	TS_LOG("カスタムアロケータ 　-> \n");
 	stop_watch.Start();
 	for (int i = 0; i<50000; ++i)
@@ -191,7 +192,6 @@ void CustomAllocatorTest()
 		int * ptr = TS_NEW(int)(i);
 		TS_DELETE(ptr);
 	}
-
 	TS_LOG("%4.6f(ミリ秒)\n", stop_watch.Elpased() * 1000.0);
 
     EndTest();
@@ -310,7 +310,7 @@ void RunTests()
 	UserLoggerTest();    
     RandomTest();
 	StaticMemoryPoolTest();
-	CustomAllocatorTest();
+	AllocatorTest();
 	SmartPointerTest();
 	FilePathTest();
 	SerializeTest();

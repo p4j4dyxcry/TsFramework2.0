@@ -90,9 +90,9 @@
         TS::GetLogger().Log(metadata, TS::GetLogger().Format(__VA_ARGS__));\
     }
 
-#define TS_ASSERT(flag , ...)\
+#define TS_ASSERT(__flag__ , ...)\
 {\
-    if(flag)\
+    if(__flag__)\
     {\
         TS_LOG_ERROR(__VA_ARGS__);\
         MessageBox(nullptr, TS::GetLogger().Format(__VA_ARGS__),"致命的なエラー",MB_OK);\
@@ -101,7 +101,7 @@
 }
 
 //! 現在時刻を出力する
-#define TS_DUMP_CURRENT_TIME(action) \
+#define TS_DUMP_CURRENT_TIME(__action__) \
 {\
     time_t t = time(nullptr);\
     \
@@ -109,7 +109,7 @@
     localtime_s(&lt, &t);\
     \
     std::stringstream s;\
-    s << action << " ::";\
+    s << __action__ << " ::";\
     s << "20" << lt.tm_year - 100 << "/" << lt.tm_mon + 1 << "/" << lt.tm_mday << " ";\
     s << lt.tm_hour << "時" << lt.tm_min << "分" << lt.tm_sec << "秒";\
     \
